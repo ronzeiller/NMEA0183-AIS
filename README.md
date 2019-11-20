@@ -15,10 +15,10 @@ Addendum for NMEA2000 and NMEA0183 Library from Timo Lappalainen https://github.
 - NMEA2000 PGN 129810 => AIS Class B "CS" Static Data Report, Message 24 Part A+B
 
 === Remarks ===
-1.) Message Type could be set to 1 or 3 (identical messages) on demand
-2.) Maneuver Indicator (not part of NMEA2000 PGN 129038) => will be set to 0 (default)
-3.) Radio Status (not part of NMEA2000 PGN 129038) => will be set to 0
-4.) AIS Version (not part of NMEA2000 PGN 129794) => will be set to 1
+1. Message Type could be set to 1 or 3 (identical messages) on demand
+2. Maneuver Indicator (not part of NMEA2000 PGN 129038) => will be set to 0 (default)
+3. Radio Status (not part of NMEA2000 PGN 129038) => will be set to 0
+4. AIS Version (not part of NMEA2000 PGN 129794) => will be set to 1
 
 == Dependencies ==
 
