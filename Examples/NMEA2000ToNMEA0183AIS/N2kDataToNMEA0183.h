@@ -81,10 +81,10 @@ public:
   }
   void Update();
 
-	// AIS
+  // AIS
   void HandleAISClassAPosReport(const tN2kMsg &N2kMsg); 	// 129038 AIS Class A Position Report
   void HandleAISClassAMessage5(const tN2kMsg &N2kMsg); 		// 129794 AIS class A Static and Voyage Related Data
-	void HandleAISClassBMessage18(const tN2kMsg &N2kMsg);		// 129039 AIS Class B Position Report
-	void HandleAISClassBMessage24A(const tN2kMsg &N2kMsg);	// 129809 AIS Class B "CS" Static Data Report, Part A
-	void HandleAISClassBMessage24B(const tN2kMsg &N2kMsg);	// 129810 AIS Class B "CS" Static Data Report, Part B
+  void HandleAISClassBMessage18(const tN2kMsg &N2kMsg);		// 129039 AIS Class B Position Report
+  void HandleAISClassBMessage24A(const tN2kMsg &N2kMsg);	// 129809 AIS Class B "CS" Static Data Report, Part A
+  void HandleAISClassBMessage24B(const tN2kMsg &N2kMsg);	// 129810 AIS Class B "CS" Static Data Report, Part B
 };

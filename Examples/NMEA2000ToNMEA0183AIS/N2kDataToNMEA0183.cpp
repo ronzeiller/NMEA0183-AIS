@@ -28,7 +28,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <AISMessages.h>
 #include <AISMsg.h>
 
-#define SERIAL_PRINT_AIS_NMEA		// Prints the !AIVDM NMEA sentence on Serial
+#define SERIAL_PRINT_AIS_NMEA    // Prints the !AIVDM NMEA sentence on Serial
 #define SERIAL_PRINT_AIS_FIELDS // Prints parsed datas derived from N2kParser
 
 //*****************************************************************************
@@ -41,12 +41,12 @@ void tN2kDataToNMEA0183::HandleMsg(const tN2kMsg &N2kMsg) {
     case 129025UL: HandlePosition(N2kMsg); break;
     case 129026UL: HandleCOGSOG(N2kMsg); break;
     case 129029UL: HandleGNSS(N2kMsg); break;
-		// AIS
-		case 129038UL: HandleAISClassAPosReport(N2kMsg); break; // AIS Class A Position Report, Message Type 1
-		case 129039UL: HandleAISClassBMessage18(N2kMsg); break;	// AIS Class B Position Report, Message Type 18
+    // AIS
+    case 129038UL: HandleAISClassAPosReport(N2kMsg); break; // AIS Class A Position Report, Message Type 1
+    case 129039UL: HandleAISClassBMessage18(N2kMsg); break;  // AIS Class B Position Report, Message Type 18
     case 129794UL: HandleAISClassAMessage5(N2kMsg);  break; // AIS Class A Ship Static and Voyage related data, Message Type 5
-		case 129809UL: HandleAISClassBMessage24A(N2kMsg); break;	// AIS Class B "CS" Static Data Report, Part A
-		case 129810UL: HandleAISClassBMessage24B(N2kMsg); break;	// AIS Class B "CS" Static Data Report, Part B
+    case 129809UL: HandleAISClassBMessage24A(N2kMsg); break;  // AIS Class B "CS" Static Data Report, Part A
+    case 129810UL: HandleAISClassBMessage24B(N2kMsg); break;  // AIS Class B "CS" Static Data Report, Part B
   }
 }
 
@@ -189,7 +189,7 @@ void tN2kDataToNMEA0183::SendRMC() {
 // 129038 AIS Class A Position Report (Message 1, 2, 3)
 void tN2kDataToNMEA0183::HandleAISClassAPosReport(const tN2kMsg &N2kMsg) {
 
-	unsigned char SID;
+  unsigned char SID;
   tN2kAISRepeat _Repeat;
   uint32_t _UserID;  // MMSI
   double _Latitude;
@@ -205,45 +205,45 @@ void tN2kDataToNMEA0183::HandleAISClassAPosReport(const tN2kMsg &N2kMsg) {
   tNMEA0183Msg NMEA0183Msg;
 
   uint8_t _MessageType = 1;
-	const char *AISClass="A";
-	char _Prefix='!';
-	tAISMsg AISMsg;
+  const char *AISClass="A";
+  char _Prefix='!';
+  tAISMsg AISMsg;
 
-	if ( ParseN2kPGN129038(N2kMsg, SID, _Repeat, _UserID, _Latitude, _Longitude, _Accuracy, _RAIM, _Seconds,
+  if ( ParseN2kPGN129038(N2kMsg, SID, _Repeat, _UserID, _Latitude, _Longitude, _Accuracy, _RAIM, _Seconds,
                           _COG, _SOG, _Heading, _ROT, _NavStatus ) ) {
 
-		if ( SetAISClassABMessage1(AISMsg, _MessageType, _Repeat, _UserID, _Latitude, _Longitude, _Accuracy,
-													_RAIM, _Seconds, _COG, _SOG, _Heading, _ROT, _NavStatus ) ) {
+    if ( SetAISClassABMessage1(AISMsg, _MessageType, _Repeat, _UserID, _Latitude, _Longitude, _Accuracy,
+                          _RAIM, _Seconds, _COG, _SOG, _Heading, _ROT, _NavStatus ) ) {
 
-			if ( !NMEA0183Msg.Init("VDM","AI", _Prefix) ) return;
-			if ( !NMEA0183Msg.AddStrField("1") ) return;
-			if ( !NMEA0183Msg.AddStrField("1") ) return;
-			if ( !NMEA0183Msg.AddEmptyField() ) return;
-			if ( !NMEA0183Msg.AddStrField(AISClass) ) return;
-			if ( !NMEA0183Msg.AddStrField( AISMsg.GetPayload() ) ) return;
-			if ( !NMEA0183Msg.AddStrField("0") ) return;		// Message 1,2,3 has always Zero Padding
+      if ( !NMEA0183Msg.Init("VDM","AI", _Prefix) ) return;
+      if ( !NMEA0183Msg.AddStrField("1") ) return;
+      if ( !NMEA0183Msg.AddStrField("1") ) return;
+      if ( !NMEA0183Msg.AddEmptyField() ) return;
+      if ( !NMEA0183Msg.AddStrField(AISClass) ) return;
+      if ( !NMEA0183Msg.AddStrField( AISMsg.GetPayload() ) ) return;
+      if ( !NMEA0183Msg.AddStrField("0") ) return;    // Message 1,2,3 has always Zero Padding
 
-			SendMessage(NMEA0183Msg);
+      SendMessage(NMEA0183Msg);
 
-			// Debug
-			#ifdef DEBUGMODE
-			Serial.println("–––––––––––––––––––––––– Msg 1 ––––––––––––––––––––––––––––––––");
-			Serial.print("Repeat: "); Serial.println(_Repeat);
-			Serial.print("UserID: "); Serial.println(_UserID);
-			Serial.print("Latitude: "); Serial.println(_Latitude);
-			Serial.print("Longitude: "); Serial.println(_Longitude);
-			Serial.print("Accuracy: "); Serial.println(_Accuracy);
-			Serial.print("RAIM: "); Serial.println(_RAIM);
-			Serial.print("Seconds: "); Serial.println(_Seconds);
-			Serial.print("COG: "); Serial.println(_COG*radToDeg);
-			Serial.print("SOG: "); Serial.println(_SOG*msTokn);
-			Serial.print("Heading: "); Serial.println(_Heading*radToDeg);
-			Serial.print("ROT: "); Serial.println(_ROT*radsToDegMin);
-			Serial.print("NavStatus: "); Serial.println(_NavStatus);
-			#endif
+      // Debug
+      #ifdef DEBUGMODE
+      Serial.println("–––––––––––––––––––––––– Msg 1 ––––––––––––––––––––––––––––––––");
+      Serial.print("Repeat: "); Serial.println(_Repeat);
+      Serial.print("UserID: "); Serial.println(_UserID);
+      Serial.print("Latitude: "); Serial.println(_Latitude);
+      Serial.print("Longitude: "); Serial.println(_Longitude);
+      Serial.print("Accuracy: "); Serial.println(_Accuracy);
+      Serial.print("RAIM: "); Serial.println(_RAIM);
+      Serial.print("Seconds: "); Serial.println(_Seconds);
+      Serial.print("COG: "); Serial.println(_COG*radToDeg);
+      Serial.print("SOG: "); Serial.println(_SOG*msTokn);
+      Serial.print("Heading: "); Serial.println(_Heading*radToDeg);
+      Serial.print("ROT: "); Serial.println(_ROT*radsToDegMin);
+      Serial.print("NavStatus: "); Serial.println(_NavStatus);
+      #endif
 
-			// Debug Print AIS-NMEA
-			Serial.print(NMEA0183Msg.GetPrefix());
+      // Debug Print AIS-NMEA
+      Serial.print(NMEA0183Msg.GetPrefix());
       Serial.print(NMEA0183Msg.Sender());
       Serial.print(NMEA0183Msg.MessageCode());
       for (int i=0; i<NMEA0183Msg.FieldCount(); i++) {
@@ -256,7 +256,7 @@ void tN2kDataToNMEA0183::HandleAISClassAPosReport(const tN2kMsg &N2kMsg) {
 
     }
   }
-}	// end 129038 AIS Class A Position Report Message 1/3
+}  // end 129038 AIS Class A Position Report Message 1/3
 
 //*****************************************************************************
 // 129039 AIS Class B Position Report --> AIS Message Type 5: Static and Voyage Related Data
@@ -282,55 +282,55 @@ void tN2kDataToNMEA0183::HandleAISClassAMessage5(const tN2kMsg &N2kMsg) {
   tN2kAISTranceiverInfo _AISinfo;
   tN2kAISDTE _DTE;
 
-	const char *AISClass="A";
-	char _Prefix='!';
-	tAISMsg AISMsg;
+  const char *AISClass="A";
+  char _Prefix='!';
+  tAISMsg AISMsg;
 
   if ( ParseN2kPGN129794(N2kMsg, _MessageID, _Repeat, _UserID, _IMONumber, _Callsign, _Name, _VesselType,
                         _Length, _Beam, _PosRefStbd, _PosRefBow, _ETAdate, _ETAtime, _Draught, _Destination,
                         _AISversion, _GNSStype, _DTE, _AISinfo) ) {
 
-													#ifdef SERIAL_PRINT_AIS_FIELDS
-													// Debug Print N2k Values
-                          //Serial.println("––––––––––––––––––––––– Msg 5 –––––––––––––––––––––––––––––––––");
-                          Serial.print("MessageID: "); Serial.println(_MessageID);
-                          Serial.print("Repeat: "); Serial.println(_Repeat);
-                          Serial.print("UserID: "); Serial.println(_UserID);
-                          Serial.print("IMONumber: "); Serial.println(_IMONumber);
-                          Serial.print("Callsign: "); Serial.println(_Callsign);
-                          Serial.print("VesselType: "); Serial.println(_VesselType);
-                          Serial.print("Name: "); Serial.println(_Name);
-                          Serial.print("Length: "); Serial.println(_Length);
-                          Serial.print("Beam: "); Serial.println(_Beam);
-                          Serial.print("PosRefStbd: "); Serial.println(_PosRefStbd);
-                          Serial.print("PosRefBow: "); Serial.println(_PosRefBow);
-                          Serial.print("ETAdate: "); Serial.println(_ETAdate);
-                          Serial.print("ETAtime: "); Serial.println(_ETAtime);
-                          Serial.print("Draught: "); Serial.println(_Draught);
-                          Serial.print("Destination: "); Serial.println(_Destination);
-                          Serial.print("GNSStype: "); Serial.println(_GNSStype);
-                          Serial.print("DTE: "); Serial.println(_DTE);
-													//Serial.println("––––––––––––––––––––––– Msg 5 –––––––––––––––––––––––––––––––––");
-													#endif
+    #ifdef SERIAL_PRINT_AIS_FIELDS
+    // Debug Print N2k Values
+    //Serial.println("––––––––––––––––––––––– Msg 5 –––––––––––––––––––––––––––––––––");
+    Serial.print("MessageID: "); Serial.println(_MessageID);
+    Serial.print("Repeat: "); Serial.println(_Repeat);
+    Serial.print("UserID: "); Serial.println(_UserID);
+    Serial.print("IMONumber: "); Serial.println(_IMONumber);
+    Serial.print("Callsign: "); Serial.println(_Callsign);
+    Serial.print("VesselType: "); Serial.println(_VesselType);
+    Serial.print("Name: "); Serial.println(_Name);
+    Serial.print("Length: "); Serial.println(_Length);
+    Serial.print("Beam: "); Serial.println(_Beam);
+    Serial.print("PosRefStbd: "); Serial.println(_PosRefStbd);
+    Serial.print("PosRefBow: "); Serial.println(_PosRefBow);
+    Serial.print("ETAdate: "); Serial.println(_ETAdate);
+    Serial.print("ETAtime: "); Serial.println(_ETAtime);
+    Serial.print("Draught: "); Serial.println(_Draught);
+    Serial.print("Destination: "); Serial.println(_Destination);
+    Serial.print("GNSStype: "); Serial.println(_GNSStype);
+    Serial.print("DTE: "); Serial.println(_DTE);
+    //Serial.println("––––––––––––––––––––––– Msg 5 –––––––––––––––––––––––––––––––––");
+    #endif
 
     if ( SetAISClassAMessage5(AISMsg, _MessageID, _Repeat, _UserID, _IMONumber, _Callsign, _Name, _VesselType,
                               _Length, _Beam, _PosRefStbd, _PosRefBow, _ETAdate, _ETAtime, _Draught, _Destination,
                               _GNSStype, _DTE ) ) {
 
-			if ( !NMEA0183Msg.Init("VDM","AI", _Prefix) ) return;
-			if ( !NMEA0183Msg.AddStrField("2") ) return;
-			if ( !NMEA0183Msg.AddStrField("1") ) return;
-			if ( !NMEA0183Msg.AddUInt32Field( _MessageID ) ) return;
-			if ( !NMEA0183Msg.AddStrField(AISClass) ) return;
-			if ( !NMEA0183Msg.AddStrField( AISMsg.GetPayloadType5_Part1() ) ) return;
-			if ( !NMEA0183Msg.AddStrField("0") ) return;		// Message 5, Part 1 has always Zero Padding
+      if ( !NMEA0183Msg.Init("VDM","AI", _Prefix) ) return;
+      if ( !NMEA0183Msg.AddStrField("2") ) return;
+      if ( !NMEA0183Msg.AddStrField("1") ) return;
+      if ( !NMEA0183Msg.AddUInt32Field( _MessageID ) ) return;
+      if ( !NMEA0183Msg.AddStrField(AISClass) ) return;
+      if ( !NMEA0183Msg.AddStrField( AISMsg.GetPayloadType5_Part1() ) ) return;
+      if ( !NMEA0183Msg.AddStrField("0") ) return;    // Message 5, Part 1 has always Zero Padding
 
-			SendMessage(NMEA0183Msg);
+      SendMessage(NMEA0183Msg);
 
-			#ifdef SERIAL_PRINT_AIS_NMEA
-			// Debug Print AIS-NMEA Message Type 5, Part 1
-			char buf[7];
-			Serial.print(NMEA0183Msg.GetPrefix());
+      #ifdef SERIAL_PRINT_AIS_NMEA
+      // Debug Print AIS-NMEA Message Type 5, Part 1
+      char buf[7];
+      Serial.print(NMEA0183Msg.GetPrefix());
       Serial.print(NMEA0183Msg.Sender());
       Serial.print(NMEA0183Msg.MessageCode());
       for (int i=0; i<NMEA0183Msg.FieldCount(); i++) {
@@ -339,21 +339,21 @@ void tN2kDataToNMEA0183::HandleAISClassAMessage5(const tN2kMsg &N2kMsg) {
       }
       sprintf(buf,"*%02X\r\n",NMEA0183Msg.GetCheckSum());
       Serial.print(buf);
-			#endif
+      #endif
 
-			if ( !NMEA0183Msg.Init("VDM","AI", _Prefix) ) return;
+      if ( !NMEA0183Msg.Init("VDM","AI", _Prefix) ) return;
       if ( !NMEA0183Msg.AddStrField("2") ) return;
       if ( !NMEA0183Msg.AddStrField("2") ) return;
       if ( !NMEA0183Msg.AddUInt32Field( _MessageID ) ) return;
       if ( !NMEA0183Msg.AddStrField("A") ) return;
       if ( !NMEA0183Msg.AddStrField( AISMsg.GetPayloadType5_Part2() ) ) return;
-			if ( !NMEA0183Msg.AddStrField("2") ) return;		// Message 5, Part 1 has always 2 Padding Zeros
+      if ( !NMEA0183Msg.AddStrField("2") ) return;    // Message 5, Part 1 has always 2 Padding Zeros
 
       SendMessage(NMEA0183Msg);
 
-			#ifdef SERIAL_PRINT_AIS_NMEA
-			// Print AIS-NMEA Message Type 5, Part 2
-			Serial.print(NMEA0183Msg.GetPrefix());
+      #ifdef SERIAL_PRINT_AIS_NMEA
+      // Print AIS-NMEA Message Type 5, Part 2
+      Serial.print(NMEA0183Msg.GetPrefix());
       Serial.print(NMEA0183Msg.Sender());
       Serial.print(NMEA0183Msg.MessageCode());
       for (int i=0; i<NMEA0183Msg.FieldCount(); i++) {
@@ -362,18 +362,18 @@ void tN2kDataToNMEA0183::HandleAISClassAMessage5(const tN2kMsg &N2kMsg) {
       }
       sprintf(buf,"*%02X\r\n",NMEA0183Msg.GetCheckSum());
       Serial.print(buf);
-			#endif
+      #endif
 
-	  }
-	}
+    }
+  }
 }
 
 //
 //*****************************************************************************
 // 129039 AIS Class B Position Report (Message 18)
 void tN2kDataToNMEA0183::HandleAISClassBMessage18(const tN2kMsg &N2kMsg) {
-	uint8_t _MessageID;
-	tN2kAISRepeat _Repeat;
+  uint8_t _MessageID;
+  tN2kAISRepeat _Repeat;
   uint32_t _UserID;  // MMSI
   double _Latitude;
   double _Longitude;
@@ -382,36 +382,35 @@ void tN2kDataToNMEA0183::HandleAISClassBMessage18(const tN2kMsg &N2kMsg) {
   uint8_t _Seconds;
   double _COG;
   double _SOG;
-	double _Heading;
-	tN2kAISUnit _Unit;
-	bool _Display, _DSC, _Band, _Msg22, _State;
-	tN2kAISMode _Mode;
+  double _Heading;
+  tN2kAISUnit _Unit;
+  bool _Display, _DSC, _Band, _Msg22, _State;
+  tN2kAISMode _Mode;
   tNMEA0183Msg NMEA0183Msg;
 
-	const char *AISClass="B";
-	char _Prefix='!';
-	tAISMsg AISMsg;
+  const char *AISClass="B";
+  char _Prefix='!';
+  tAISMsg AISMsg;
 
-	if ( ParseN2kPGN129039(N2kMsg, _MessageID, _Repeat, _UserID, _Latitude, _Longitude, _Accuracy, _RAIM,
-	                   _Seconds, _COG, _SOG, _Heading, _Unit, _Display, _DSC, _Band, _Msg22, _Mode, _State) ) {
-	//
-		if ( SetAISClassBMessage18(AISMsg, _MessageID, _Repeat, _UserID, _Latitude, _Longitude, _Accuracy, _RAIM,
-										 _Seconds, _COG, _SOG, _Heading, _Unit, _Display, _DSC, _Band, _Msg22, _Mode, _State) ) {
+  if ( ParseN2kPGN129039(N2kMsg, _MessageID, _Repeat, _UserID, _Latitude, _Longitude, _Accuracy, _RAIM,
+                     _Seconds, _COG, _SOG, _Heading, _Unit, _Display, _DSC, _Band, _Msg22, _Mode, _State) ) {
 
-			//
-			if ( !NMEA0183Msg.Init("VDM","AI", _Prefix) ) return;
-			if ( !NMEA0183Msg.AddStrField("1") ) return;
-			if ( !NMEA0183Msg.AddStrField("1") ) return;
-			if ( !NMEA0183Msg.AddEmptyField() ) return;
-			if ( !NMEA0183Msg.AddStrField(AISClass) ) return;
-			if ( !NMEA0183Msg.AddStrField( AISMsg.GetPayload() ) ) return;
-			if ( !NMEA0183Msg.AddStrField("0") ) return;		// Message 18, has always Zero Padding
+    if ( SetAISClassBMessage18(AISMsg, _MessageID, _Repeat, _UserID, _Latitude, _Longitude, _Accuracy, _RAIM,
+                     _Seconds, _COG, _SOG, _Heading, _Unit, _Display, _DSC, _Band, _Msg22, _Mode, _State) ) {
 
-			SendMessage(NMEA0183Msg);
+      if ( !NMEA0183Msg.Init("VDM","AI", _Prefix) ) return;
+      if ( !NMEA0183Msg.AddStrField("1") ) return;
+      if ( !NMEA0183Msg.AddStrField("1") ) return;
+      if ( !NMEA0183Msg.AddEmptyField() ) return;
+      if ( !NMEA0183Msg.AddStrField(AISClass) ) return;
+      if ( !NMEA0183Msg.AddStrField( AISMsg.GetPayload() ) ) return;
+      if ( !NMEA0183Msg.AddStrField("0") ) return;    // Message 18, has always Zero Padding
 
-			#ifdef SERIAL_PRINT_AIS_NMEA
-			// Debug Print AIS-NMEA
-			Serial.print(NMEA0183Msg.GetPrefix());
+      SendMessage(NMEA0183Msg);
+
+      #ifdef SERIAL_PRINT_AIS_NMEA
+      // Debug Print AIS-NMEA
+      Serial.print(NMEA0183Msg.GetPrefix());
       Serial.print(NMEA0183Msg.Sender());
       Serial.print(NMEA0183Msg.MessageCode());
       for (int i=0; i<NMEA0183Msg.FieldCount(); i++) {
@@ -421,40 +420,40 @@ void tN2kDataToNMEA0183::HandleAISClassBMessage18(const tN2kMsg &N2kMsg) {
       char buf[7];
       sprintf(buf,"*%02X\r\n",NMEA0183Msg.GetCheckSum());
       Serial.print(buf);
-			#endif
-		}
-	}
-	return;
+      #endif
+    }
+  }
+  return;
 }
 
 //*****************************************************************************
 // PGN 129809 AIS Class B "CS" Static Data Report, Part A
 void tN2kDataToNMEA0183::HandleAISClassBMessage24A(const tN2kMsg &N2kMsg) {
 
-	uint8_t _MessageID;
-	tN2kAISRepeat _Repeat;
-	uint32_t _UserID;  // MMSI
-	char _Name[21];
+  uint8_t _MessageID;
+  tN2kAISRepeat _Repeat;
+  uint32_t _UserID;  // MMSI
+  char _Name[21];
 
-	if ( ParseN2kPGN129809 (N2kMsg, _MessageID, _Repeat, _UserID, _Name) ) {
+  if ( ParseN2kPGN129809 (N2kMsg, _MessageID, _Repeat, _UserID, _Name) ) {
 
-		tAISMsg AISMsg;
-		if ( SetAISClassBMessage24PartA(AISMsg, _MessageID, _Repeat, _UserID, _Name) ) {
+    tAISMsg AISMsg;
+    if ( SetAISClassBMessage24PartA(AISMsg, _MessageID, _Repeat, _UserID, _Name) ) {
 
-		}
-	}
-	return;
+    }
+  }
+  return;
 }
 
 //*****************************************************************************
 // PGN 129810 AIS Class B "CS" Static Data Report, Part B -> AIS Message 24 (2 Parts)
 void tN2kDataToNMEA0183::HandleAISClassBMessage24B(const tN2kMsg &N2kMsg) {
 
-	uint8_t _MessageID;
-	tN2kAISRepeat _Repeat;
+  uint8_t _MessageID;
+  tN2kAISRepeat _Repeat;
   uint32_t _UserID, _MothershipID;  // MMSI
-	char _Callsign[8];
-	char _Vendor[4];
+  char _Callsign[8];
+  char _Vendor[4];
   uint8_t _VesselType;
   double _Length;
   double _Beam;
@@ -462,48 +461,48 @@ void tN2kDataToNMEA0183::HandleAISClassBMessage24B(const tN2kMsg &N2kMsg) {
   double _PosRefBow;
   tNMEA0183Msg NMEA0183Msg;
 
-	if ( ParseN2kPGN129810(N2kMsg, _MessageID, _Repeat, _UserID, _VesselType, _Vendor, _Callsign,
-												_Length, _Beam, _PosRefStbd, _PosRefBow, _MothershipID) ) {
+  if ( ParseN2kPGN129810(N2kMsg, _MessageID, _Repeat, _UserID, _VesselType, _Vendor, _Callsign,
+                        _Length, _Beam, _PosRefStbd, _PosRefBow, _MothershipID) ) {
 
-		const char *AISClass="B";
-		char _Prefix='!';
-		tAISMsg AISMsg;
+    const char *AISClass="B";
+    char _Prefix='!';
+    tAISMsg AISMsg;
 
-		if ( SetAISClassBMessage24(AISMsg, _MessageID, _Repeat, _UserID, _VesselType, _Vendor, _Callsign,
-													_Length, _Beam, _PosRefStbd, _PosRefBow, _MothershipID ) ) {
+    if ( SetAISClassBMessage24(AISMsg, _MessageID, _Repeat, _UserID, _VesselType, _Vendor, _Callsign,
+                          _Length, _Beam, _PosRefStbd, _PosRefBow, _MothershipID ) ) {
 
-			#ifdef SERIAL_PRINT_AIS_FIELDS
-			// Debug Print N2k Values
-			Serial.println("––––––––––––––––––––––– Msg 24 ––––––––––––––––––––––––––––––––");
-			Serial.print("MessageID: "); Serial.println(_MessageID);
-			Serial.print("Repeat: "); Serial.println(_Repeat);
-			Serial.print("UserID: "); Serial.println(_UserID);
-			Serial.print("VesselType: "); Serial.println(_VesselType);
-			Serial.print("Vendor: "); Serial.println(_Vendor);
-			Serial.print("Callsign: "); Serial.println(_Callsign);
-			//Serial.print("Name: "); Serial.println(_Name);
-			Serial.print("Length: "); Serial.println(_Length);
-			Serial.print("Beam: "); Serial.println(_Beam);
-			Serial.print("PosRefStbd: "); Serial.println(_PosRefStbd);
-			Serial.print("PosRefBow: "); Serial.println(_PosRefBow);
-			Serial.print("MothershipID: "); Serial.println(_MothershipID);
-			Serial.println("––––––––––––––––––––––– Msg 24 ––––––––––––––––––––––––––––––––");
-			#endif
+      #ifdef SERIAL_PRINT_AIS_FIELDS
+      // Debug Print N2k Values
+      Serial.println("––––––––––––––––––––––– Msg 24 ––––––––––––––––––––––––––––––––");
+      Serial.print("MessageID: "); Serial.println(_MessageID);
+      Serial.print("Repeat: "); Serial.println(_Repeat);
+      Serial.print("UserID: "); Serial.println(_UserID);
+      Serial.print("VesselType: "); Serial.println(_VesselType);
+      Serial.print("Vendor: "); Serial.println(_Vendor);
+      Serial.print("Callsign: "); Serial.println(_Callsign);
+      //Serial.print("Name: "); Serial.println(_Name);
+      Serial.print("Length: "); Serial.println(_Length);
+      Serial.print("Beam: "); Serial.println(_Beam);
+      Serial.print("PosRefStbd: "); Serial.println(_PosRefStbd);
+      Serial.print("PosRefBow: "); Serial.println(_PosRefBow);
+      Serial.print("MothershipID: "); Serial.println(_MothershipID);
+      Serial.println("––––––––––––––––––––––– Msg 24 ––––––––––––––––––––––––––––––––");
+      #endif
 
-			if ( !NMEA0183Msg.Init("VDM","AI", _Prefix) ) return;
-			if ( !NMEA0183Msg.AddStrField("1") ) return;
-			if ( !NMEA0183Msg.AddStrField("1") ) return;
-			if ( !NMEA0183Msg.AddEmptyField() ) return;
-			if ( !NMEA0183Msg.AddStrField(AISClass) ) return;
-			if ( !NMEA0183Msg.AddStrField( AISMsg.GetPayloadType24_PartA() ) ) return;
-			if ( !NMEA0183Msg.AddStrField("0") ) return;		// Message 24, both parts have always Zero Padding
+      if ( !NMEA0183Msg.Init("VDM","AI", _Prefix) ) return;
+      if ( !NMEA0183Msg.AddStrField("1") ) return;
+      if ( !NMEA0183Msg.AddStrField("1") ) return;
+      if ( !NMEA0183Msg.AddEmptyField() ) return;
+      if ( !NMEA0183Msg.AddStrField(AISClass) ) return;
+      if ( !NMEA0183Msg.AddStrField( AISMsg.GetPayloadType24_PartA() ) ) return;
+      if ( !NMEA0183Msg.AddStrField("0") ) return;    // Message 24, both parts have always Zero Padding
 
-			SendMessage(NMEA0183Msg);
+      SendMessage(NMEA0183Msg);
 
-			#ifdef SERIAL_PRINT_AIS_NMEA
-			// Debug Print AIS-NMEA
-			char buf[7];
-			Serial.print(NMEA0183Msg.GetPrefix());
+      #ifdef SERIAL_PRINT_AIS_NMEA
+      // Debug Print AIS-NMEA
+      char buf[7];
+      Serial.print(NMEA0183Msg.GetPrefix());
       Serial.print(NMEA0183Msg.Sender());
       Serial.print(NMEA0183Msg.MessageCode());
       for (int i=0; i<NMEA0183Msg.FieldCount(); i++) {
@@ -512,31 +511,31 @@ void tN2kDataToNMEA0183::HandleAISClassBMessage24B(const tN2kMsg &N2kMsg) {
       }
       sprintf(buf,"*%02X\r\n",NMEA0183Msg.GetCheckSum());
       Serial.print(buf);
-			#endif
+      #endif
 
-			if ( !NMEA0183Msg.Init("VDM","AI", _Prefix) ) return;
-			if ( !NMEA0183Msg.AddStrField("1") ) return;
-			if ( !NMEA0183Msg.AddStrField("1") ) return;
-			if ( !NMEA0183Msg.AddEmptyField() ) return;
-			if ( !NMEA0183Msg.AddStrField(AISClass) ) return;
-			if ( !NMEA0183Msg.AddStrField( AISMsg.GetPayloadType24_PartB() ) ) return;
-			if ( !NMEA0183Msg.AddStrField("0") ) return;		// Message 24, both parts have always Zero Padding
+      if ( !NMEA0183Msg.Init("VDM","AI", _Prefix) ) return;
+      if ( !NMEA0183Msg.AddStrField("1") ) return;
+      if ( !NMEA0183Msg.AddStrField("1") ) return;
+      if ( !NMEA0183Msg.AddEmptyField() ) return;
+      if ( !NMEA0183Msg.AddStrField(AISClass) ) return;
+      if ( !NMEA0183Msg.AddStrField( AISMsg.GetPayloadType24_PartB() ) ) return;
+      if ( !NMEA0183Msg.AddStrField("0") ) return;    // Message 24, both parts have always Zero Padding
 
-			SendMessage(NMEA0183Msg);
+      SendMessage(NMEA0183Msg);
 
-			#ifdef SERIAL_PRINT_AIS_NMEA
-			Serial.print(NMEA0183Msg.GetPrefix());
+      #ifdef SERIAL_PRINT_AIS_NMEA
+      Serial.print(NMEA0183Msg.GetPrefix());
       Serial.print(NMEA0183Msg.Sender());
       Serial.print(NMEA0183Msg.MessageCode());
       for (int i=0; i<NMEA0183Msg.FieldCount(); i++) {
         Serial.print(",");
         Serial.print(NMEA0183Msg.Field(i));
       }
-			sprintf(buf,"*%02X\r\n",NMEA0183Msg.GetCheckSum());
+      sprintf(buf,"*%02X\r\n",NMEA0183Msg.GetCheckSum());
       Serial.print(buf);
-			#endif
+      #endif
 
-		}
-	}
-	return;
+    }
+  }
+  return;
 }

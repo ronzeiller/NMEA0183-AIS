@@ -46,30 +46,30 @@ public:
     uint32_t _userID;
     std::string _shipName;
 
-		ship(uint32_t UserID, std::string ShipName) :	_userID(UserID), _shipName(ShipName) {}
+    ship(uint32_t UserID, std::string ShipName) :  _userID(UserID), _shipName(ShipName) {}
 };
 
 extern std::vector<ship *> vships;
 
 // Types 1, 2 and 3: Position Report Class A or B
 bool SetAISClassABMessage1(tAISMsg &AISMsg, uint8_t MessageType, uint8_t Repeat,
-													uint32_t UserID, double Latitude, double Longitude, bool Accuracy, bool RAIM, uint8_t Seconds,
-													double COG, double SOG, double Heading, double ROT, uint8_t NavStatus);
+                          uint32_t UserID, double Latitude, double Longitude, bool Accuracy, bool RAIM, uint8_t Seconds,
+                          double COG, double SOG, double Heading, double ROT, uint8_t NavStatus);
 
 //*****************************************************************************
 // AIS Class A Static and Voyage Related Data Message Type 5
 bool SetAISClassAMessage5(tAISMsg &AISMsg, uint8_t MessageID, uint8_t Repeat,
-													uint32_t UserID, uint32_t IMONumber, char *Callsign, char *Name,
-													uint8_t VesselType, double Length, double Beam, double PosRefStbd,
-													double PosRefBow, uint16_t ETAdate,	double ETAtime, double Draught,
-													char *Destination, tN2kGNSStype GNSStype, uint8_t DTE );
+                          uint32_t UserID, uint32_t IMONumber, char *Callsign, char *Name,
+                          uint8_t VesselType, double Length, double Beam, double PosRefStbd,
+                          double PosRefBow, uint16_t ETAdate,  double ETAtime, double Draught,
+                          char *Destination, tN2kGNSStype GNSStype, uint8_t DTE );
 
 //*****************************************************************************
 // AIS position report (class B 129039) -> Standard Class B CS Position Report Message Type 18 Part B
 bool SetAISClassBMessage18(tAISMsg &AISMsg, uint8_t MessageID, uint8_t Repeat, uint32_t UserID,
-                        					double Latitude, double Longitude, bool Accuracy, bool RAIM,
-                        					uint8_t Seconds, double COG, double SOG, double Heading, tN2kAISUnit Unit,
-                        					bool Display, bool DSC, bool Band, bool Msg22, bool Mode, bool State);
+                                  double Latitude, double Longitude, bool Accuracy, bool RAIM,
+                                  uint8_t Seconds, double COG, double SOG, double Heading, tN2kAISUnit Unit,
+                                  bool Display, bool DSC, bool Band, bool Msg22, bool Mode, bool State);
 
 //*****************************************************************************
 // Static Data Report Class B, Message Type 24
@@ -79,8 +79,8 @@ bool SetAISClassBMessage24PartA(tAISMsg &AISMsg, uint8_t MessageID, uint8_t Repe
 //*****************************************************************************
 // Static Data Report Class B, Message Type 24
 bool  SetAISClassBMessage24(tAISMsg &AISMsg, uint8_t MessageID, uint8_t Repeat,
-													uint32_t UserID, uint8_t VesselType, char *VendorID, char *Callsign,
-													 double Length, double Beam, double PosRefStbd,	double PosRefBow, uint32_t MothershipID );
+                          uint32_t UserID, uint8_t VesselType, char *VendorID, char *Callsign,
+                           double Length, double Beam, double PosRefStbd,  double PosRefBow, uint32_t MothershipID );
 
 // ************************  Helper for AIS  ***********************************
 bool AddMessageType(tAISMsg &AISMsg, uint8_t MessageType);
