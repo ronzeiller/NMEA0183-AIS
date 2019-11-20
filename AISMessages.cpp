@@ -65,22 +65,22 @@ bool SetAISClassABMessage1( tAISMsg &AISMsg, uint8_t MessageType, uint8_t Repeat
                           double COG, double SOG, double Heading, double ROT, uint8_t NavStatus ) {
 
   AISMsg.Clear();
-  if ( !AddMessageType(AISMsg, MessageType) ) return false;    // 0 - 5     | 6    Message Type -> Constant: 1
-  if ( !AddRepeat(AISMsg, Repeat) ) return false;              // 6 - 7     | 2    Repeat Indicator: 0 = default; 3 = do not repeat any more
-  if ( !AddUserID(AISMsg, UserID) ) return false;              // 8 - 37    | 30  MMSI
+  if ( !AddMessageType(AISMsg, MessageType) ) return false;    // 0 - 5    | 6    Message Type -> Constant: 1
+  if ( !AddRepeat(AISMsg, Repeat) ) return false;              // 6 - 7    | 2    Repeat Indicator: 0 = default; 3 = do not repeat any more
+  if ( !AddUserID(AISMsg, UserID) ) return false;              // 8 - 37   | 30  MMSI
   if ( !AddNavStatus(AISMsg, NavStatus) ) return false;        // 38-41    | 4    Navigational Status  e.g.: "Under way sailing"
   if ( !AddROT(AISMsg, ROT) ) return false;                    // 42-49    | 8    Rate of Turn (ROT)
   if ( !AddSOG(AISMsg, SOG) ) return false;                    // 50-59    | 10   [m/s -> kts]  SOG with one digit  x10, 1023 = N/A
-  if ( !AISMsg.AddBool(Accuracy, 1) ) return false;            // 60        | 1    GPS Accuracy 1 oder 0, Default 0
+  if ( !AISMsg.AddBool(Accuracy, 1) ) return false;            // 60       | 1    GPS Accuracy 1 oder 0, Default 0
   if ( !AddLongitude(AISMsg, Longitude) ) return false;        // 61-88    | 28  Longitude in Minutes / 10000
-  if ( !AddLatitude(AISMsg, Latitude) ) return false;          // 89-115    | 27  Latitude in Minutes / 10000
+  if ( !AddLatitude(AISMsg, Latitude) ) return false;          // 89-115   | 27  Latitude in Minutes / 10000
   if ( !AddCOG(AISMsg, COG) ) return false;                    // 116-127  | 12  Course over ground will be 3600 (0xE10) if that data is not available.
-  if ( !AddHeading (AISMsg, Heading) ) return false;          // 128-136  |  9    True Heading (HDG)
+  if ( !AddHeading (AISMsg, Heading) ) return false;           // 128-136  |  9    True Heading (HDG)
   if ( !AddSeconds(AISMsg, Seconds) ) return false;            // 137-142  | 6    Seconds in UTC timestamp)
   if ( !AISMsg.AddIntToPayloadBin(0, 2) ) return false;        // 143-144  | 2    Maneuver Indicator: 0 (default) 1, 2  (not delivered within this PGN)
   if ( !AISMsg.AddIntToPayloadBin(0, 3) ) return false;        // 145-147  | 3   Spare
   if ( !AISMsg.AddBool(RAIM, 1) ) return false;                // 148-148  | 1   RAIM flag 0 = RAIM not in use (default), 1 = RAIM in use
-  if ( !AISMsg.AddIntToPayloadBin(0, 19) ) return false;      // 149-167  | 19  Radio Status  (-> 0 NOT SENT WITH THIS PGN!!!!!)
+  if ( !AISMsg.AddIntToPayloadBin(0, 19) ) return false;       // 149-167  | 19  Radio Status  (-> 0 NOT SENT WITH THIS PGN!!!!!)
 
   return true;
 }
@@ -102,16 +102,16 @@ bool  SetAISClassAMessage5(tAISMsg &AISMsg, uint8_t MessageID, uint8_t Repeat,
   if ( !AddUserID(AISMsg, UserID) ) return false;              // 8 - 37    | 30  MMSI
   if ( !AISMsg.AddIntToPayloadBin(1, 2) ) return false;        // 38 - 39   |  2   AIS Version  -> 0 oder 1  NOT DERIVED FROM N2k, Always 1!!!!
   if ( !AddIMONumber(AISMsg, IMONumber) ) return false;        // 40 - 69   | 30   IMO Number unisgned
-  if ( !AddText(AISMsg, Callsign, 42) ) return false;          // 70 - 111 | 42   Call Sign  WDE4178      -> 7  6-bit characters -> Ascii lt. Table)
-  if ( !AddText(AISMsg, Name, 120) ) return false;            // 112-231   | 120 Vessel Name  POINT FERMIN  -> 20 6-bit characters -> Ascii lt. Table
-  if ( !AISMsg.AddIntToPayloadBin(VesselType, 8) ) return false;    // 232-239   |   8 Ship Type  0....255 e.g. 31  Towing
+  if ( !AddText(AISMsg, Callsign, 42) ) return false;          // 70 - 111  | 42   Call Sign  WDE4178      -> 7  6-bit characters -> Ascii lt. Table)
+  if ( !AddText(AISMsg, Name, 120) ) return false;             // 112-231   | 120 Vessel Name  POINT FERMIN  -> 20 6-bit characters -> Ascii lt. Table
+  if ( !AISMsg.AddIntToPayloadBin(VesselType, 8) ) return false;   // 232-239   |   8 Ship Type  0....255 e.g. 31  Towing
   if ( !AddDimensions(AISMsg, Length, Beam, PosRefStbd, PosRefBow) ) return false;  // 240 - 269 | 30 Dimensions
-  if ( !AddEPFDFixType(AISMsg, GNSStype) ) return false;          // 270-273   | 4  Position Fix Type, 0 (default)
-  if ( !AddETADateTime(AISMsg, ETAdate, ETAtime) ) return false;  // 274 -293 | 20 Estimated time of arrival; MMDDHHMM UTC
-  if ( !AddStaticDraught(AISMsg, Draught) ) return false;          // 294-301  | 8  Maximum Present Static Draught
-  if ( !AddText(AISMsg, Destination, 120) ) return false;          // 302-421  | 120 | 20  Destination 20 6-bit characters
-  if ( !AISMsg.AddIntToPayloadBin(DTE, 1) ) return false;          // 422      | 1   | Data terminal equipment (DTE) ready (0 = available, 1 = not available = default)
-  if ( !AISMsg.AddIntToPayloadBin(0, 1) ) return false;            // 423      | 1   | spare
+  if ( !AddEPFDFixType(AISMsg, GNSStype) ) return false;           // 270-273   | 4  Position Fix Type, 0 (default)
+  if ( !AddETADateTime(AISMsg, ETAdate, ETAtime) ) return false;   // 274 -293  | 20 Estimated time of arrival; MMDDHHMM UTC
+  if ( !AddStaticDraught(AISMsg, Draught) ) return false;          // 294-301   | 8  Maximum Present Static Draught
+  if ( !AddText(AISMsg, Destination, 120) ) return false;          // 302-421   | 120 | 20  Destination 20 6-bit characters
+  if ( !AISMsg.AddIntToPayloadBin(DTE, 1) ) return false;          // 422       | 1   | Data terminal equipment (DTE) ready (0 = available, 1 = not available = default)
+  if ( !AISMsg.AddIntToPayloadBin(0, 1) ) return false;            // 423       | 1   | spare
 
   return true;
 }
@@ -129,26 +129,26 @@ bool SetAISClassBMessage18(tAISMsg &AISMsg, uint8_t MessageID, uint8_t Repeat, u
                                   bool Display, bool DSC, bool Band, bool Msg22, bool Mode, bool State) {
   //
   AISMsg.Clear();
-  if ( !AddMessageType(AISMsg, MessageID) ) return false;    // 0 - 5     | 6    Message Type -> Constant: 18
-  if ( !AddRepeat(AISMsg, Repeat) ) return false;              // 6 - 7     | 2    Repeat Indicator: 0 = default; 3 = do not repeat any more
-  if ( !AddUserID(AISMsg, UserID) ) return false;              // 8 - 37    | 30  MMSI
+  if ( !AddMessageType(AISMsg, MessageID) ) return false;      // 0 - 5    | 6    Message Type -> Constant: 18
+  if ( !AddRepeat(AISMsg, Repeat) ) return false;              // 6 - 7    | 2    Repeat Indicator: 0 = default; 3 = do not repeat any more
+  if ( !AddUserID(AISMsg, UserID) ) return false;              // 8 - 37   | 30  MMSI
   if ( !AISMsg.AddIntToPayloadBin(0, 8) ) return false;        // 38-45    | 8   Regional Reserved
   if ( !AddSOG(AISMsg, SOG) ) return false;                    // 46-55    | 10   [m/s -> kts]  SOG with one digit  x10, 1023 = N/A
-  if ( !AISMsg.AddBool(Accuracy, 1) ) return false;            // 56        | 1    GPS Accuracy 1 oder 0, Default 0
+  if ( !AISMsg.AddBool(Accuracy, 1) ) return false;            // 56       | 1    GPS Accuracy 1 oder 0, Default 0
   if ( !AddLongitude(AISMsg, Longitude) ) return false;        // 57-84    | 28  Longitude in Minutes / 10000
-  if ( !AddLatitude(AISMsg, Latitude) ) return false;          // 85-111    | 27  Latitude in Minutes / 10000
+  if ( !AddLatitude(AISMsg, Latitude) ) return false;          // 85-111   | 27  Latitude in Minutes / 10000
   if ( !AddCOG(AISMsg, COG) ) return false;                    // 112-123  | 12  Course over ground will be 3600 (0xE10) if that data is not available.
-  if ( !AddHeading (AISMsg, Heading) ) return false;          // 124-132  |  9    True Heading (HDG)
+  if ( !AddHeading (AISMsg, Heading) ) return false;           // 124-132  |  9    True Heading (HDG)
   if ( !AddSeconds(AISMsg, Seconds) ) return false;            // 133-138  | 6    Seconds in UTC timestamp)
   if ( !AISMsg.AddIntToPayloadBin(0, 2) ) return false;        // 139-140  | 2   Regional Reserved
-  if ( !AISMsg.AddIntToPayloadBin(Unit, 1) ) return false;    // 141      | 1   0=Class B SOTDMA unit 1=Class B CS (Carrier Sense) unit
+  if ( !AISMsg.AddIntToPayloadBin(Unit, 1) ) return false;     // 141      | 1   0=Class B SOTDMA unit 1=Class B CS (Carrier Sense) unit
   if ( !AISMsg.AddIntToPayloadBin(Display, 1) ) return false;  // 142      | 1    0=No visual display, 1=Has display, (Probably not reliable).
-  if ( !AISMsg.AddBool(DSC, 1) ) return false;                // 143      | 1    If 1, unit is attached to a VHF voice radio with DSC capability.
-  if ( !AISMsg.AddBool(Band, 1) ) return false;                // 144       | 1   If this flag is 1, the unit can use any part of the marine channel.
-  if ( !AISMsg.AddBool(Msg22, 1) ) return false;              // 145       | 1   If 1, unit can accept a channel assignment via Message Type 22.
-  if ( !AISMsg.AddBool(Mode, 1) ) return false;                // 146       | 1   Assigned-mode flag: 0 = autonomous mode (default), 1 = assigned mode
-  if ( !AISMsg.AddBool(RAIM, 1) ) return false;                // 147       | 1   as for Message Type 1,2,3
-  if ( !AISMsg.AddIntToPayloadBin(0, 20) ) return false;      // 148-167   | 20  Radio Status not in PGN 129039
+  if ( !AISMsg.AddBool(DSC, 1) ) return false;                 // 143      | 1    If 1, unit is attached to a VHF voice radio with DSC capability.
+  if ( !AISMsg.AddBool(Band, 1) ) return false;                // 144      | 1   If this flag is 1, the unit can use any part of the marine channel.
+  if ( !AISMsg.AddBool(Msg22, 1) ) return false;               // 145      | 1   If 1, unit can accept a channel assignment via Message Type 22.
+  if ( !AISMsg.AddBool(Mode, 1) ) return false;                // 146      | 1   Assigned-mode flag: 0 = autonomous mode (default), 1 = assigned mode
+  if ( !AISMsg.AddBool(RAIM, 1) ) return false;                // 147      | 1   as for Message Type 1,2,3
+  if ( !AISMsg.AddIntToPayloadBin(0, 20) ) return false;       // 148-167  | 20  Radio Status not in PGN 129039
 
   return true;
 }
@@ -193,7 +193,6 @@ bool SetAISClassBMessage24PartA(tAISMsg &AISMsg, uint8_t MessageID, uint8_t Repe
     std::string nm;
     nm+= Name;
     vships.push_back(new ship(UserID, nm));
-    Serial.print(UserID); Serial.print(" / "); Serial.print(nm.c_str()); Serial.print(" -> Schiffsliste hat nun ");Serial.print(vships.size());Serial.println(" Einträge");
   }
   return true;
 }
@@ -203,17 +202,8 @@ bool  SetAISClassBMessage24(tAISMsg &AISMsg, uint8_t MessageID, uint8_t Repeat,
                           uint32_t UserID, uint8_t VesselType, char *VendorID, char *Callsign,
                           double Length, double Beam, double PosRefStbd,  double PosRefBow, uint32_t MothershipID ) {
 
-
-// *(char *)hoge means that interpret hoge as a pointer for char and read the data on where hoge points at.
-// ShipName = (char*) vships[i]->_shipName; + AddText(AISMsg, ShipName, 120) ==>
-// +EET LANE (SWEET LANE)
-// +ATIME statt TEATIME
-// + DUGI OTOK statt RS DUGI OTOK
-// Serial.println( *(char*) ShipName); nicht ok
-//
   uint8_t PartNr = 0;            // Identifier for the message part number; always 0 for Part A
-  char *ShipName = (char*)" ";  // get from vector to look up for sent Messages Part A
-  //std::string ShipName = "";
+  char *ShipName = (char*)" ";   // get from vector to look up for sent Messages Part A
 
   uint8_t i;
   for ( i = 0; i < vships.size(); i++) {
@@ -232,20 +222,18 @@ bool  SetAISClassBMessage24(tAISMsg &AISMsg, uint8_t MessageID, uint8_t Repeat,
   AISMsg.Clear();
   // Common for PART A AND Part B Bit 0 - 39 / len 40
   if ( !AddMessageType(AISMsg, 24) ) return false;                // 0 - 5     | 6    Message Type -> Constant: 24
-  if ( !AddRepeat(AISMsg, Repeat) ) return false;                  // 6 - 7     | 2    Repeat Indicator: 0 = default; 3 = do not repeat any more
-  if ( !AddUserID(AISMsg, UserID) ) return false;                  // 8 - 37    | 30  MMSI
+  if ( !AddRepeat(AISMsg, Repeat) ) return false;                 // 6 - 7     | 2    Repeat Indicator: 0 = default; 3 = do not repeat any more
+  if ( !AddUserID(AISMsg, UserID) ) return false;                 // 8 - 37    | 30  MMSI
   if ( !AISMsg.AddIntToPayloadBin(PartNr, 2) ) return false;      // 38-39    | 2    Part Number 0-1 ->
 
   // Part A: 40 + 128 = len 168
   if ( !AddText(AISMsg, ShipName, 120) ) return false;            // 40-159   | 120 Vessel Name  20 6-bit characters -> Ascii Table
-  if ( !AISMsg.AddIntToPayloadBin(0, 8) ) return false;            // 160-167   | 8    Spare
-  //Serial.print(" --> PayloadBin Länge nach Spare: "); Serial.println( strlen(AISMsg.PayloadBin) );
-  //Serial.println(" --> PayloadBin nach Spare: "); Serial.println( AISMsg.PayloadBin );
+  if ( !AISMsg.AddIntToPayloadBin(0, 8) ) return false;           // 160-167   | 8    Spare
 
   /*
   // Kurt Schwehr https://gpsd.gitlab.io/gpsd/AIVDM.html#_type_24_static_data_report
   // PART B: 40 + 128 = len 168
-  if ( !AISMsg.AddIntToPayloadBin(VesselType, 8) ) return false;    // 168-175 | 40-47  |  8    Ship Type 0....99
+  if ( !AISMsg.AddIntToPayloadBin(VesselType, 8) ) return false;     // 168-175 | 40-47  |  8    Ship Type 0....99
   if ( !AddText(AISMsg, VendorID, 18) ) return false;                // 176-193 | 48-65  | 18    Vendor ID 3 6-bit chars
   //uint8_t UnitModelCode=0;  // not sent with N2k PGN
   //uint32_t SerialNr=0;      // not sent with N2k PGN
@@ -260,15 +248,11 @@ bool  SetAISClassBMessage24(tAISMsg &AISMsg, uint8_t MessageID, uint8_t Repeat,
 
   // https://www.navcen.uscg.gov/?pageName=AISMessagesB
   // PART B: 40 + 128 = len 168
-  if ( !AISMsg.AddIntToPayloadBin(VesselType, 8) ) return false;    // 168-175 | 40-47  |  8    Ship Type 0....99
+  if ( !AISMsg.AddIntToPayloadBin(VesselType, 8) ) return false;     // 168-175 | 40-47  |  8    Ship Type 0....99
   if ( !AddText(AISMsg, VendorID, 42) ) return false;                // 176-217 | 48-89  | 42    Vendor ID + Unit Model Code + Serial Number
   if ( !AddText(AISMsg, Callsign, 42) ) return false;                // 218-259 | 90-131 | 42   Call Sign  WDE4178      -> 7  6-bit characters, as in Msg Type 5
   if ( !AddDimensions(AISMsg, Length, Beam, PosRefStbd, PosRefBow) ) return false;  // 260-289 | 132-161 | 30 Dimensions
-  // Type of electronic position fixing device, 4 bit 0 = undefined = default
-  if ( !AISMsg.AddIntToPayloadBin(0, 6) ) return false;              // 290-295 | 162-167   | 6    Spare
-
-  // Serial.print(" --> PayloadBin Type24 vorher: "); Serial.println( strlen(AISMsg.PayloadBin) );
-  // Serial.println(" --> PayloadBin Type24vorher: "); Serial.println( AISMsg.PayloadBin );
+  if ( !AISMsg.AddIntToPayloadBin(0, 6) ) return false;              // 290-295 | 162-167 | 6    Spare
 
   return true;
 }
@@ -331,9 +315,9 @@ bool AddText(tAISMsg &AISMsg, char *FieldVal, uint8_t length) {
 //  *****************************************************************************
 //  Calculate Dimension A, B, C, D
 //  double PosRefBow      240-248   |   9 [m] Dimension to Bow, reference for pos. A
-//  Length -  PosRefBow    249-257   |   9 [m] Dimension to Stern, reference for pos. B
-//  Beam - PosRefStbd      258-263   |   6 [m] Dimension to Port, reference for pos. C
-//  PosRefStbd             264-269   |   6 [m] Dimension to Starboard, reference for pos. D
+//  Length -  PosRefBow    249-257  |   9 [m] Dimension to Stern, reference for pos. B
+//  Beam - PosRefStbd      258-263  |   6 [m] Dimension to Port, reference for pos. C
+//  PosRefStbd             264-269  |   6 [m] Dimension to Starboard, reference for pos. D
 //  Ship dimensions will be 0 if not available. For the dimensions to bow and stern,
 //  the special value 511 indicates 511 meters or greater;
 //  for the dimensions to port and starboard, the special value 63 indicates 63 meters or greater.

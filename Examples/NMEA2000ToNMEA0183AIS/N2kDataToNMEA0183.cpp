@@ -29,7 +29,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <AISMsg.h>
 
 #define SERIAL_PRINT_AIS_NMEA    // Prints the !AIVDM NMEA sentence on Serial
-#define SERIAL_PRINT_AIS_FIELDS // Prints parsed datas derived from N2kParser
+#define SERIAL_PRINT_AIS_FIELDS  // Prints parsed datas derived from N2kParser
 
 //*****************************************************************************
 void tN2kDataToNMEA0183::HandleMsg(const tN2kMsg &N2kMsg) {
@@ -42,9 +42,9 @@ void tN2kDataToNMEA0183::HandleMsg(const tN2kMsg &N2kMsg) {
     case 129026UL: HandleCOGSOG(N2kMsg); break;
     case 129029UL: HandleGNSS(N2kMsg); break;
     // AIS
-    case 129038UL: HandleAISClassAPosReport(N2kMsg); break; // AIS Class A Position Report, Message Type 1
-    case 129039UL: HandleAISClassBMessage18(N2kMsg); break;  // AIS Class B Position Report, Message Type 18
-    case 129794UL: HandleAISClassAMessage5(N2kMsg);  break; // AIS Class A Ship Static and Voyage related data, Message Type 5
+    case 129038UL: HandleAISClassAPosReport(N2kMsg); break;   // AIS Class A Position Report, Message Type 1
+    case 129039UL: HandleAISClassBMessage18(N2kMsg); break;   // AIS Class B Position Report, Message Type 18
+    case 129794UL: HandleAISClassAMessage5(N2kMsg);  break;   // AIS Class A Ship Static and Voyage related data, Message Type 5
     case 129809UL: HandleAISClassBMessage24A(N2kMsg); break;  // AIS Class B "CS" Static Data Report, Part A
     case 129810UL: HandleAISClassBMessage24B(N2kMsg); break;  // AIS Class B "CS" Static Data Report, Part B
   }
