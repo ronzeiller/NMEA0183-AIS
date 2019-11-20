@@ -202,7 +202,6 @@ void tN2kDataToNMEA0183::HandleAISClassAPosReport(const tN2kMsg &N2kMsg) {
   double _Heading;
   double _ROT;
   tN2kAISNavStatus _NavStatus;
-  tNMEA0183Msg NMEA0183Msg;
 
   uint8_t _MessageType = 1;
   const char *AISClass="A";
@@ -215,15 +214,15 @@ void tN2kDataToNMEA0183::HandleAISClassAPosReport(const tN2kMsg &N2kMsg) {
     if ( SetAISClassABMessage1(AISMsg, _MessageType, _Repeat, _UserID, _Latitude, _Longitude, _Accuracy,
                           _RAIM, _Seconds, _COG, _SOG, _Heading, _ROT, _NavStatus ) ) {
 
-      if ( !NMEA0183Msg.Init("VDM","AI", _Prefix) ) return;
-      if ( !NMEA0183Msg.AddStrField("1") ) return;
-      if ( !NMEA0183Msg.AddStrField("1") ) return;
-      if ( !NMEA0183Msg.AddEmptyField() ) return;
-      if ( !NMEA0183Msg.AddStrField(AISClass) ) return;
-      if ( !NMEA0183Msg.AddStrField( AISMsg.GetPayload() ) ) return;
-      if ( !NMEA0183Msg.AddStrField("0") ) return;    // Message 1,2,3 has always Zero Padding
+      if ( !AISMsg.Init("VDM","AI", _Prefix) ) return;
+      if ( !AISMsg.AddStrField("1") ) return;
+      if ( !AISMsg.AddStrField("1") ) return;
+      if ( !AISMsg.AddEmptyField() ) return;
+      if ( !AISMsg.AddStrField(AISClass) ) return;
+      if ( !AISMsg.AddStrField( AISMsg.GetPayload() ) ) return;
+      if ( !AISMsg.AddStrField("0") ) return;    // Message 1,2,3 has always Zero Padding
 
-      SendMessage(NMEA0183Msg);
+      SendMessage(AISMsg);
 
       // Debug
       #ifdef DEBUGMODE
@@ -243,15 +242,15 @@ void tN2kDataToNMEA0183::HandleAISClassAPosReport(const tN2kMsg &N2kMsg) {
       #endif
 
       // Debug Print AIS-NMEA
-      Serial.print(NMEA0183Msg.GetPrefix());
-      Serial.print(NMEA0183Msg.Sender());
-      Serial.print(NMEA0183Msg.MessageCode());
-      for (int i=0; i<NMEA0183Msg.FieldCount(); i++) {
+      Serial.print(AISMsg.GetPrefix());
+      Serial.print(AISMsg.Sender());
+      Serial.print(AISMsg.MessageCode());
+      for (int i=0; i<AISMsg.FieldCount(); i++) {
         Serial.print(",");
-        Serial.print(NMEA0183Msg.Field(i));
+        Serial.print(AISMsg.Field(i));
       }
       char buf[7];
-      sprintf(buf,"*%02X\r\n",NMEA0183Msg.GetCheckSum());
+      sprintf(buf,"*%02X\r\n",AISMsg.GetCheckSum());
       Serial.print(buf);
 
     }
@@ -261,7 +260,6 @@ void tN2kDataToNMEA0183::HandleAISClassAPosReport(const tN2kMsg &N2kMsg) {
 //*****************************************************************************
 // 129039 AIS Class B Position Report --> AIS Message Type 5: Static and Voyage Related Data
 void tN2kDataToNMEA0183::HandleAISClassAMessage5(const tN2kMsg &N2kMsg) {
-  tNMEA0183Msg NMEA0183Msg;
   uint8_t _MessageID;
   tN2kAISRepeat _Repeat;
   uint32_t _UserID;  // MMSI
@@ -317,50 +315,50 @@ void tN2kDataToNMEA0183::HandleAISClassAMessage5(const tN2kMsg &N2kMsg) {
                               _Length, _Beam, _PosRefStbd, _PosRefBow, _ETAdate, _ETAtime, _Draught, _Destination,
                               _GNSStype, _DTE ) ) {
 
-      if ( !NMEA0183Msg.Init("VDM","AI", _Prefix) ) return;
-      if ( !NMEA0183Msg.AddStrField("2") ) return;
-      if ( !NMEA0183Msg.AddStrField("1") ) return;
-      if ( !NMEA0183Msg.AddUInt32Field( _MessageID ) ) return;
-      if ( !NMEA0183Msg.AddStrField(AISClass) ) return;
-      if ( !NMEA0183Msg.AddStrField( AISMsg.GetPayloadType5_Part1() ) ) return;
-      if ( !NMEA0183Msg.AddStrField("0") ) return;    // Message 5, Part 1 has always Zero Padding
+      if ( !AISMsg.Init("VDM","AI", _Prefix) ) return;
+      if ( !AISMsg.AddStrField("2") ) return;
+      if ( !AISMsg.AddStrField("1") ) return;
+      if ( !AISMsg.AddUInt32Field( _MessageID ) ) return;
+      if ( !AISMsg.AddStrField(AISClass) ) return;
+      if ( !AISMsg.AddStrField( AISMsg.GetPayloadType5_Part1() ) ) return;
+      if ( !AISMsg.AddStrField("0") ) return;    // Message 5, Part 1 has always Zero Padding
 
-      SendMessage(NMEA0183Msg);
+      SendMessage(AISMsg);
 
       #ifdef SERIAL_PRINT_AIS_NMEA
       // Debug Print AIS-NMEA Message Type 5, Part 1
       char buf[7];
-      Serial.print(NMEA0183Msg.GetPrefix());
-      Serial.print(NMEA0183Msg.Sender());
-      Serial.print(NMEA0183Msg.MessageCode());
-      for (int i=0; i<NMEA0183Msg.FieldCount(); i++) {
+      Serial.print(AISMsg.GetPrefix());
+      Serial.print(AISMsg.Sender());
+      Serial.print(AISMsg.MessageCode());
+      for (int i=0; i<AISMsg.FieldCount(); i++) {
         Serial.print(",");
-        Serial.print(NMEA0183Msg.Field(i));
+        Serial.print(AISMsg.Field(i));
       }
-      sprintf(buf,"*%02X\r\n",NMEA0183Msg.GetCheckSum());
+      sprintf(buf,"*%02X\r\n",AISMsg.GetCheckSum());
       Serial.print(buf);
       #endif
 
-      if ( !NMEA0183Msg.Init("VDM","AI", _Prefix) ) return;
-      if ( !NMEA0183Msg.AddStrField("2") ) return;
-      if ( !NMEA0183Msg.AddStrField("2") ) return;
-      if ( !NMEA0183Msg.AddUInt32Field( _MessageID ) ) return;
-      if ( !NMEA0183Msg.AddStrField("A") ) return;
-      if ( !NMEA0183Msg.AddStrField( AISMsg.GetPayloadType5_Part2() ) ) return;
-      if ( !NMEA0183Msg.AddStrField("2") ) return;    // Message 5, Part 1 has always 2 Padding Zeros
+      if ( !AISMsg.Init("VDM","AI", _Prefix) ) return;
+      if ( !AISMsg.AddStrField("2") ) return;
+      if ( !AISMsg.AddStrField("2") ) return;
+      if ( !AISMsg.AddUInt32Field( _MessageID ) ) return;
+      if ( !AISMsg.AddStrField("A") ) return;
+      if ( !AISMsg.AddStrField( AISMsg.GetPayloadType5_Part2() ) ) return;
+      if ( !AISMsg.AddStrField("2") ) return;    // Message 5, Part 1 has always 2 Padding Zeros
 
-      SendMessage(NMEA0183Msg);
+      SendMessage(AISMsg);
 
       #ifdef SERIAL_PRINT_AIS_NMEA
       // Print AIS-NMEA Message Type 5, Part 2
-      Serial.print(NMEA0183Msg.GetPrefix());
-      Serial.print(NMEA0183Msg.Sender());
-      Serial.print(NMEA0183Msg.MessageCode());
-      for (int i=0; i<NMEA0183Msg.FieldCount(); i++) {
+      Serial.print(AISMsg.GetPrefix());
+      Serial.print(AISMsg.Sender());
+      Serial.print(AISMsg.MessageCode());
+      for (int i=0; i<AISMsg.FieldCount(); i++) {
         Serial.print(",");
-        Serial.print(NMEA0183Msg.Field(i));
+        Serial.print(AISMsg.Field(i));
       }
-      sprintf(buf,"*%02X\r\n",NMEA0183Msg.GetCheckSum());
+      sprintf(buf,"*%02X\r\n",AISMsg.GetCheckSum());
       Serial.print(buf);
       #endif
 
@@ -386,7 +384,6 @@ void tN2kDataToNMEA0183::HandleAISClassBMessage18(const tN2kMsg &N2kMsg) {
   tN2kAISUnit _Unit;
   bool _Display, _DSC, _Band, _Msg22, _State;
   tN2kAISMode _Mode;
-  tNMEA0183Msg NMEA0183Msg;
 
   const char *AISClass="B";
   char _Prefix='!';
@@ -398,27 +395,27 @@ void tN2kDataToNMEA0183::HandleAISClassBMessage18(const tN2kMsg &N2kMsg) {
     if ( SetAISClassBMessage18(AISMsg, _MessageID, _Repeat, _UserID, _Latitude, _Longitude, _Accuracy, _RAIM,
                      _Seconds, _COG, _SOG, _Heading, _Unit, _Display, _DSC, _Band, _Msg22, _Mode, _State) ) {
 
-      if ( !NMEA0183Msg.Init("VDM","AI", _Prefix) ) return;
-      if ( !NMEA0183Msg.AddStrField("1") ) return;
-      if ( !NMEA0183Msg.AddStrField("1") ) return;
-      if ( !NMEA0183Msg.AddEmptyField() ) return;
-      if ( !NMEA0183Msg.AddStrField(AISClass) ) return;
-      if ( !NMEA0183Msg.AddStrField( AISMsg.GetPayload() ) ) return;
-      if ( !NMEA0183Msg.AddStrField("0") ) return;    // Message 18, has always Zero Padding
+      if ( !AISMsg.Init("VDM","AI", _Prefix) ) return;
+      if ( !AISMsg.AddStrField("1") ) return;
+      if ( !AISMsg.AddStrField("1") ) return;
+      if ( !AISMsg.AddEmptyField() ) return;
+      if ( !AISMsg.AddStrField(AISClass) ) return;
+      if ( !AISMsg.AddStrField( AISMsg.GetPayload() ) ) return;
+      if ( !AISMsg.AddStrField("0") ) return;    // Message 18, has always Zero Padding
 
-      SendMessage(NMEA0183Msg);
+      SendMessage(AISMsg);
 
       #ifdef SERIAL_PRINT_AIS_NMEA
       // Debug Print AIS-NMEA
-      Serial.print(NMEA0183Msg.GetPrefix());
-      Serial.print(NMEA0183Msg.Sender());
-      Serial.print(NMEA0183Msg.MessageCode());
-      for (int i=0; i<NMEA0183Msg.FieldCount(); i++) {
+      Serial.print(AISMsg.GetPrefix());
+      Serial.print(AISMsg.Sender());
+      Serial.print(AISMsg.MessageCode());
+      for (int i=0; i<AISMsg.FieldCount(); i++) {
         Serial.print(",");
-        Serial.print(NMEA0183Msg.Field(i));
+        Serial.print(AISMsg.Field(i));
       }
       char buf[7];
-      sprintf(buf,"*%02X\r\n",NMEA0183Msg.GetCheckSum());
+      sprintf(buf,"*%02X\r\n",AISMsg.GetCheckSum());
       Serial.print(buf);
       #endif
     }
@@ -459,7 +456,6 @@ void tN2kDataToNMEA0183::HandleAISClassBMessage24B(const tN2kMsg &N2kMsg) {
   double _Beam;
   double _PosRefStbd;
   double _PosRefBow;
-  tNMEA0183Msg NMEA0183Msg;
 
   if ( ParseN2kPGN129810(N2kMsg, _MessageID, _Repeat, _UserID, _VesselType, _Vendor, _Callsign,
                         _Length, _Beam, _PosRefStbd, _PosRefBow, _MothershipID) ) {
@@ -489,49 +485,49 @@ void tN2kDataToNMEA0183::HandleAISClassBMessage24B(const tN2kMsg &N2kMsg) {
       Serial.println("––––––––––––––––––––––– Msg 24 ––––––––––––––––––––––––––––––––");
       #endif
 
-      if ( !NMEA0183Msg.Init("VDM","AI", _Prefix) ) return;
-      if ( !NMEA0183Msg.AddStrField("1") ) return;
-      if ( !NMEA0183Msg.AddStrField("1") ) return;
-      if ( !NMEA0183Msg.AddEmptyField() ) return;
-      if ( !NMEA0183Msg.AddStrField(AISClass) ) return;
-      if ( !NMEA0183Msg.AddStrField( AISMsg.GetPayloadType24_PartA() ) ) return;
-      if ( !NMEA0183Msg.AddStrField("0") ) return;    // Message 24, both parts have always Zero Padding
+      if ( !AISMsg.Init("VDM","AI", _Prefix) ) return;
+      if ( !AISMsg.AddStrField("1") ) return;
+      if ( !AISMsg.AddStrField("1") ) return;
+      if ( !AISMsg.AddEmptyField() ) return;
+      if ( !AISMsg.AddStrField(AISClass) ) return;
+      if ( !AISMsg.AddStrField( AISMsg.GetPayloadType24_PartA() ) ) return;
+      if ( !AISMsg.AddStrField("0") ) return;    // Message 24, both parts have always Zero Padding
 
-      SendMessage(NMEA0183Msg);
+      SendMessage(AISMsg);
 
       #ifdef SERIAL_PRINT_AIS_NMEA
       // Debug Print AIS-NMEA
       char buf[7];
-      Serial.print(NMEA0183Msg.GetPrefix());
-      Serial.print(NMEA0183Msg.Sender());
-      Serial.print(NMEA0183Msg.MessageCode());
-      for (int i=0; i<NMEA0183Msg.FieldCount(); i++) {
+      Serial.print(AISMsg.GetPrefix());
+      Serial.print(AISMsg.Sender());
+      Serial.print(AISMsg.MessageCode());
+      for (int i=0; i<AISMsg.FieldCount(); i++) {
         Serial.print(",");
-        Serial.print(NMEA0183Msg.Field(i));
+        Serial.print(AISMsg.Field(i));
       }
-      sprintf(buf,"*%02X\r\n",NMEA0183Msg.GetCheckSum());
+      sprintf(buf,"*%02X\r\n",AISMsg.GetCheckSum());
       Serial.print(buf);
       #endif
 
-      if ( !NMEA0183Msg.Init("VDM","AI", _Prefix) ) return;
-      if ( !NMEA0183Msg.AddStrField("1") ) return;
-      if ( !NMEA0183Msg.AddStrField("1") ) return;
-      if ( !NMEA0183Msg.AddEmptyField() ) return;
-      if ( !NMEA0183Msg.AddStrField(AISClass) ) return;
-      if ( !NMEA0183Msg.AddStrField( AISMsg.GetPayloadType24_PartB() ) ) return;
-      if ( !NMEA0183Msg.AddStrField("0") ) return;    // Message 24, both parts have always Zero Padding
+      if ( !AISMsg.Init("VDM","AI", _Prefix) ) return;
+      if ( !AISMsg.AddStrField("1") ) return;
+      if ( !AISMsg.AddStrField("1") ) return;
+      if ( !AISMsg.AddEmptyField() ) return;
+      if ( !AISMsg.AddStrField(AISClass) ) return;
+      if ( !AISMsg.AddStrField( AISMsg.GetPayloadType24_PartB() ) ) return;
+      if ( !AISMsg.AddStrField("0") ) return;    // Message 24, both parts have always Zero Padding
 
-      SendMessage(NMEA0183Msg);
+      SendMessage(AISMsg);
 
       #ifdef SERIAL_PRINT_AIS_NMEA
-      Serial.print(NMEA0183Msg.GetPrefix());
-      Serial.print(NMEA0183Msg.Sender());
-      Serial.print(NMEA0183Msg.MessageCode());
-      for (int i=0; i<NMEA0183Msg.FieldCount(); i++) {
+      Serial.print(AISMsg.GetPrefix());
+      Serial.print(AISMsg.Sender());
+      Serial.print(AISMsg.MessageCode());
+      for (int i=0; i<AISMsg.FieldCount(); i++) {
         Serial.print(",");
-        Serial.print(NMEA0183Msg.Field(i));
+        Serial.print(AISMsg.Field(i));
       }
-      sprintf(buf,"*%02X\r\n",NMEA0183Msg.GetCheckSum());
+      sprintf(buf,"*%02X\r\n",AISMsg.GetCheckSum());
       Serial.print(buf);
       #endif
 

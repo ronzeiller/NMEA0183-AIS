@@ -64,7 +64,7 @@ bool SetAISClassABMessage1( tAISMsg &AISMsg, uint8_t MessageType, uint8_t Repeat
                           uint32_t UserID, double Latitude, double Longitude, bool Accuracy, bool RAIM, uint8_t Seconds,
                           double COG, double SOG, double Heading, double ROT, uint8_t NavStatus ) {
 
-  AISMsg.Clear();
+  AISMsg.ClearAIS();
   if ( !AddMessageType(AISMsg, MessageType) ) return false;    // 0 - 5    | 6    Message Type -> Constant: 1
   if ( !AddRepeat(AISMsg, Repeat) ) return false;              // 6 - 7    | 2    Repeat Indicator: 0 = default; 3 = do not repeat any more
   if ( !AddUserID(AISMsg, UserID) ) return false;              // 8 - 37   | 30  MMSI
@@ -96,7 +96,7 @@ bool  SetAISClassAMessage5(tAISMsg &AISMsg, uint8_t MessageID, uint8_t Repeat,
                           char *Destination, tN2kGNSStype GNSStype, uint8_t DTE ) {
 
   // AIS Type 5 Message
-  AISMsg.Clear();
+  AISMsg.ClearAIS();
   if ( !AddMessageType(AISMsg, 5) ) return false;              // 0 - 5     | 6    Message Type -> Constant: 5
   if ( !AddRepeat(AISMsg, Repeat) ) return false;              // 6 - 7     | 2    Repeat Indicator: 0 = default; 3 = do not repeat any more
   if ( !AddUserID(AISMsg, UserID) ) return false;              // 8 - 37    | 30  MMSI
@@ -128,7 +128,7 @@ bool SetAISClassBMessage18(tAISMsg &AISMsg, uint8_t MessageID, uint8_t Repeat, u
                                   uint8_t Seconds, double COG, double SOG, double Heading, tN2kAISUnit Unit,
                                   bool Display, bool DSC, bool Band, bool Msg22, bool Mode, bool State) {
   //
-  AISMsg.Clear();
+  AISMsg.ClearAIS();
   if ( !AddMessageType(AISMsg, MessageID) ) return false;      // 0 - 5    | 6    Message Type -> Constant: 18
   if ( !AddRepeat(AISMsg, Repeat) ) return false;              // 6 - 7    | 2    Repeat Indicator: 0 = default; 3 = do not repeat any more
   if ( !AddUserID(AISMsg, UserID) ) return false;              // 8 - 37   | 30  MMSI
@@ -219,7 +219,7 @@ bool  SetAISClassBMessage24(tAISMsg &AISMsg, uint8_t MessageID, uint8_t Repeat,
   }
 
   // AIS Type 24 Message
-  AISMsg.Clear();
+  AISMsg.ClearAIS();
   // Common for PART A AND Part B Bit 0 - 39 / len 40
   if ( !AddMessageType(AISMsg, 24) ) return false;                // 0 - 5     | 6    Message Type -> Constant: 24
   if ( !AddRepeat(AISMsg, Repeat) ) return false;                 // 6 - 7     | 2    Repeat Indicator: 0 = default; 3 = do not repeat any more

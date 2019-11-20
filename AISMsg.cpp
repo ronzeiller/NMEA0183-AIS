@@ -31,30 +31,6 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <cstdio>
 #include <sstream>
 
-#ifndef SECS_PER_DAY
-#define SECS_PER_DAY 86400UL
-#endif
-
-// Teensy 3.2, 3.5, 3.6
-// Arduino Mega
-// Linux
-#if !( defined(__MK20DX256__)||defined(__ATMEGA32U4__) || defined(__MK64FX512__) || defined (__MK66FX1M0__) \
-       || defined(__SAM3X8E__) \
-       || defined(__linux__)||defined(__linux)||defined(linux) \
-     )
-#define NO_PRINTF_DOUBLE_SUPPORT
-#endif
-
-#ifndef ARDUINO
-extern "C" {
-// Application execution delay. Must be implemented by application.
-extern void delay(uint32_t ms);
-
-// Current uptime in milliseconds. Must be implemented by application.
-extern uint32_t millis();
-}
-#endif
-
 const double pi=3.1415926535897932384626433832795;
 const double kmhToms=1000.0/3600.0;
 const double knToms=1852.0/3600.0;
@@ -67,17 +43,16 @@ const double mToFathoms=0.546806649;
 const double mToFeet=3.2808398950131;
 const double radsToDegMin = 60 * 360.0 / (2 * pi);    // [rad/s -> degree/minute]
 
-//const std::string AsciiChar = "@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_ !\"#$%&\'()*+,-./0123456789:;<=>?";
 const char AsciiChar[] = "@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_ !\"#$%&\'()*+,-./0123456789:;<=>?";
 const char *tAISMsg::EmptyAISField = "000000";
 
 //*****************************************************************************
 tAISMsg::tAISMsg() {
-  Clear();
+  ClearAIS();
 }
 
 //*****************************************************************************
-void tAISMsg::Clear() {
+void tAISMsg::ClearAIS() {
 
   PayloadBin[0]=0;
   Payload[0]=0;
@@ -85,43 +60,6 @@ void tAISMsg::Clear() {
   iAddPld=0;
 
 }
-
-//*****************************************************************************
-unsigned long tAISMsg::CalcTimeTDaysTo1970Offset() {
-  // Need better routine. Now just guess between 1.1.1970 and 1.1.2000
-  tmElements_t tme;
-  SetYear(tme,2010);
-  SetMonth(tme,1);
-  SetDay(tme,1);
-  SetHour(tme,0);
-  SetMin(tme,0);
-  SetSec(tme,0);
-
-  unsigned long days=makeTime(tme)/SECS_PER_DAY;
-
-  return 14610-days;
-}
-
-unsigned long tAISMsg::TimeTDaysTo1970Offset=tAISMsg::CalcTimeTDaysTo1970Offset();
-
-//*****************************************************************************
-unsigned long tAISMsg::elapsedDaysSince1970(time_t dt) {
-  unsigned long days=dt/SECS_PER_DAY;
-
-  days+=TimeTDaysTo1970Offset;
-
-  return days;
-}
-
-
-#ifndef _Time_h
-//*****************************************************************************
-time_t tAISMsg::daysToTime_t(unsigned long val) {
-  val-=TimeTDaysTo1970Offset;
-
-  return val*SECS_PER_DAY;
-}
-#endif
 
 //*****************************************************************************
 // Add 6bit with no data.
