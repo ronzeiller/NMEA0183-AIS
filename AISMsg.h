@@ -47,41 +47,41 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 class tAISMsg : public tNMEA0183Msg {
 
-	protected:	// AIS-NMEA
-		std::bitset<BITSET_LENGTH> bset;
-		static const char *EmptyAISField;  // 6bits 0			not used yet.....
-		static const char *AsciChar;
+  protected:  // AIS-NMEA
+    std::bitset<BITSET_LENGTH> bset;
+    static const char *EmptyAISField;  // 6bits 0      not used yet.....
+    static const char *AsciChar;
 
-		uint16_t iAddPldBin;
+    uint16_t iAddPldBin;
     char Payload[AIS_MSG_MAX_LEN];
     uint8_t  iAddPld;
 
-	public:
-		char PayloadBin[AIS_BIN_MAX_LEN];
-		char PayloadBin2[AIS_BIN_MAX_LEN];
-		// Clear message
+  public:
+    char PayloadBin[AIS_BIN_MAX_LEN];
+    char PayloadBin2[AIS_BIN_MAX_LEN];
+    // Clear message
     void ClearAIS();
 
-	public:
-		tAISMsg();
-		const char *GetPayload();
-		const char *GetPayloadType5_Part1();
-		const char *GetPayloadType5_Part2();
-		const char *GetPayloadType24_PartA();
-		const char *GetPayloadType24_PartB();
-		const char *GetPayloadBin() const { return  PayloadBin; }
+  public:
+    tAISMsg();
+    const char *GetPayload();
+    const char *GetPayloadType5_Part1();
+    const char *GetPayloadType5_Part2();
+    const char *GetPayloadType24_PartA();
+    const char *GetPayloadType24_PartB();
+    const char *GetPayloadBin() const { return  PayloadBin; }
 
-		// Generally Used
-		bool AddIntToPayloadBin(int32_t ival, uint16_t countBits);
-		bool AddBool(bool &bval, uint8_t size);
-		bool AddEncodedCharToAscii(char *sval, size_t Length);
+    // Generally Used
+    bool AddIntToPayloadBin(int32_t ival, uint16_t countBits);
+    bool AddBool(bool &bval, uint8_t size);
+    bool AddEncodedCharToAscii(char *sval, size_t Length);
     bool convertBinaryAISPayloadBinToAscii(const char *payloadbin);
-		bool AddAISEmptyField(uint8_t iBits);
+    bool AddAISEmptyField(uint8_t iBits);
 
-	// AIS Helper functions
-	protected:
-		inline int32_t aRoundToInt(double x) {
-		  return (x >= 0) ? (int32_t) floor(x + 0.5) : (int32_t) ceil(x - 0.5);
-		}
+  // AIS Helper functions
+  protected:
+    inline int32_t aRoundToInt(double x) {
+      return (x >= 0) ? (int32_t) floor(x + 0.5) : (int32_t) ceil(x - 0.5);
+    }
 };
 #endif
