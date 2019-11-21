@@ -25,7 +25,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <NMEA0183.h>
 #include <NMEA2000.h>
 
-//*****************************************************************************
+//------------------------------------------------------------------------------
 class tN2kDataToNMEA0183 : public tNMEA2000::tMsgHandler {
 public:
   using tSendNMEA0183MessageCallback=void (*)(const tNMEA0183Msg &NMEA0183Msg);

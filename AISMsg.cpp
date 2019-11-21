@@ -106,7 +106,7 @@ bool tAISMsg::AddBool(bool &bval, uint8_t size) {
   return true;
 }
 
-//*****************************************************************************
+// *****************************************************************************
 // converts sval into binary 6-bit AScii encoded string and appends it to PayloadBin
 // filled up with "@" == "000000" to given bit-size
 bool tAISMsg::AddEncodedCharToAscii(char *sval, size_t countBits) {
@@ -144,7 +144,7 @@ bool tAISMsg::AddEncodedCharToAscii(char *sval, size_t countBits) {
   return true;
 }
 
-//*****************************************************************************
+// *****************************************************************************
 bool tAISMsg::convertBinaryAISPayloadBinToAscii(const char *payloadbin) {
   uint16_t len;
 

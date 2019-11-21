@@ -85,7 +85,7 @@ bool SetAISClassABMessage1( tAISMsg &AISMsg, uint8_t MessageType, uint8_t Repeat
   return true;
 }
 
-//*****************************************************************************
+// *****************************************************************************
 // https://www.navcen.uscg.gov/?pageName=AISMessagesAStatic#
 // AIS class A Static and Voyage Related Data
 // Values derived from ParseN2kPGN129794();
@@ -116,7 +116,7 @@ bool  SetAISClassAMessage5(tAISMsg &AISMsg, uint8_t MessageID, uint8_t Repeat,
   return true;
 }
 
-//****************************************************************************
+//  ****************************************************************************
 // AIS position report (class B 129039) -> Type 18: Standard Class B CS Position Report
 //  ParseN2kPGN129039(const tN2kMsg &N2kMsg, uint8_t &MessageID, tN2kAISRepeat &Repeat, uint32_t &UserID,
 //                        double &Latitude, double &Longitude, bool &Accuracy, bool &RAIM,
@@ -171,14 +171,14 @@ bool SetAISClassBMessage18(tAISMsg &AISMsg, uint8_t MessageID, uint8_t Repeat, u
 //  If the Part Number field is 0, the rest of the message is interpreted as a Part A;
 //  If it is 1, the rest of the message is interpreted as a Part B; values 2 and 3 are not allowed.
 //
-//  PGN 129809 AIS Class B "CS" Static Data Report, Part A < -- > VDM, VDO (AIS VHF Data-link message 24)
-//  PGN 129810 AIS Class B "CS" Static Data Report, Part B < -- > VDM, VDO (AIS VHF Data-link message 24)
-//   ParseN2kPGN129809 (const tN2kMsg &N2kMsg, uint8_t &MessageID, tN2kAISRepeat &Repeat, uint32_t &UserID, char *Name) -> store to vector
+//  PGN 129809 AIS Class B "CS" Static Data Report, Part A <--> VDM, VDO (AIS VHF Data-link message 24)
+//  PGN 129810 AIS Class B "CS" Static Data Report, Part B <--> VDM, VDO (AIS VHF Data-link message 24)
+//   ParseN2kPGN129809 (const tN2kMsg &N2kMsg, uint8_t &MessageID, tN2kAISRepeat &Repeat, uint32_t &UserID, char *Name)  --> store to vector
 //  ParseN2kPGN129810(const tN2kMsg &N2kMsg, uint8_t &MessageID, tN2kAISRepeat &Repeat, uint32_t &UserID,
 //                      uint8_t &VesselType, char *Vendor, char *Callsign, double &Length, double &Beam,
 //                      double &PosRefStbd, double &PosRefBow, uint32_t &MothershipID);
 //
-//  Part A: MessageID, Repeat, UserID, ShipName -> store in vector to call on Part B arrivals!!!
+//  Part A: MessageID, Repeat, UserID, ShipName --> store in vector to call on Part B arrivals!!!
 //  Part B: MessageID, Repeat, UserID, VesselType (5), Callsign (5), Length & Beam, PosRefBow,.. (5)
 bool SetAISClassBMessage24PartA(tAISMsg &AISMsg, uint8_t MessageID, uint8_t Repeat, uint32_t UserID, char *Name) {
 
@@ -197,7 +197,7 @@ bool SetAISClassBMessage24PartA(tAISMsg &AISMsg, uint8_t MessageID, uint8_t Repe
   return true;
 }
 
-//***************************************************************************************************************
+// ***************************************************************************************************************
 bool  SetAISClassBMessage24(tAISMsg &AISMsg, uint8_t MessageID, uint8_t Repeat,
                           uint32_t UserID, uint8_t VesselType, char *VendorID, char *Callsign,
                           double Length, double Beam, double PosRefStbd,  double PosRefBow, uint32_t MothershipID ) {
@@ -261,7 +261,7 @@ bool  SetAISClassBMessage24(tAISMsg &AISMsg, uint8_t MessageID, uint8_t Repeat,
 //                 Validations and Unit Transformations
 //******************************************************************************
 
-//*****************************************************************************
+// *****************************************************************************
 // 6bit    Message Type -> Constant: 1 or 3, 5, 24 etc.
 bool AddMessageType(tAISMsg &AISMsg, uint8_t MessageType) {
 
@@ -270,7 +270,7 @@ bool AddMessageType(tAISMsg &AISMsg, uint8_t MessageType) {
   return true;
 }
 
-//*****************************************************************************
+// *****************************************************************************
 // 2bit    Repeat Indicator: 0 = default; 3 = do not repeat any more
 bool AddRepeat(tAISMsg &AISMsg, uint8_t Repeat) {
 
@@ -279,7 +279,7 @@ bool AddRepeat(tAISMsg &AISMsg, uint8_t Repeat) {
   return true;
 }
 
-//*****************************************************************************
+// *****************************************************************************
 // 30bit UserID = MMSI        (9 decimal digits)
 bool AddUserID(tAISMsg &AISMsg, uint32_t UserID) {
 
@@ -288,7 +288,7 @@ bool AddUserID(tAISMsg &AISMsg, uint32_t UserID) {
   return true;
 }
 
-//*****************************************************************************
+// *****************************************************************************
 //   30 bit   IMO Number
 //   0 = not available = default – Not applicable to SAR aircraft
 //  0000000001-0000999999 not used
@@ -301,7 +301,7 @@ bool AddIMONumber(tAISMsg &AISMsg, uint32_t &IMONumber) {
   return true;
 }
 
-//*****************************************************************************
+// *****************************************************************************
 // 42bit Callsign alphanumeric value, max 7 six-bit characters
 // 120bit Name or Destination
 bool AddText(tAISMsg &AISMsg, char *FieldVal, uint8_t length) {
@@ -358,7 +358,7 @@ bool AddDimensions(tAISMsg &AISMsg, double Length, double Beam, double PosRefStb
   return true;
 }
 
-//*****************************************************************************
+// *****************************************************************************
 // 4 Bit  Navigational Status  e.g.: "Under way sailing"
 // Same values used as in tN2kAISNavStatus, so we can use direct numbers
 bool AddNavStatus(tAISMsg &AISMsg, uint8_t &NavStatus) {
@@ -368,7 +368,7 @@ bool AddNavStatus(tAISMsg &AISMsg, uint8_t &NavStatus) {
   return true;
 }
 
-//*****************************************************************************
+// *****************************************************************************
 // 8bit  [rad/s -> degree/minute]  Rate of Turn ROT  128 = N/A
 // 0 = not turning
 // 1…126 = turning right at up to 708 degrees per minute or higher
@@ -388,7 +388,7 @@ bool AddROT(tAISMsg &AISMsg, double &rot) {
   return true;
 }
 
-//*****************************************************************************
+// *****************************************************************************
 // 10 bit [m/s -> kts]  SOG x10, 1023 = N/A
 // Speed over ground is in 0.1-knot resolution from 0 to 102 knots.
 // Value 1023 indicates speed is not available, value 1022 indicates 102.2 knots or higher.
@@ -405,7 +405,7 @@ bool AddSOG (tAISMsg &AISMsg, double &sog) {
   return true;
 }
 
-//*****************************************************************************
+// *****************************************************************************
 // 28 bit   @TODO check negative values
 // Values up to plus or minus 180 degrees, East = positive, West = negative.
 // A value of 181 degrees (0x6791AC0 hex) indicates that longitude is not available and is the default.
@@ -417,7 +417,7 @@ bool AddLongitude(tAISMsg &AISMsg, double &Longitude) {
   return true;
 }
 
-//*****************************************************************************
+// *****************************************************************************
 //   27 bit
 //  Values up to plus or minus 90 degrees, North = positive, South = negative.
 //   A value of 91 degrees (0x3412140 hex) indicates latitude is not available and is the default.
@@ -441,7 +441,7 @@ bool AddHeading (tAISMsg &AISMsg, double &heading) {
   return true;
 }
 
-//*****************************************************************************
+// *****************************************************************************
 // 12bit Relative to true north, to 0.1 degree precision
 bool AddCOG(tAISMsg &AISMsg, double cog) {
   int16_t iTemp;
@@ -451,7 +451,7 @@ bool AddCOG(tAISMsg &AISMsg, double cog) {
   return true;
 }
 
-//*****************************************************************************
+// *****************************************************************************
 // 6bit   Seconds in UTC timestamp should be 0-59, except for these special values:
 // 60 if time stamp is not available (default)
 // 61 if positioning system is in manual input mode
@@ -494,7 +494,7 @@ bool AddEPFDFixType(tAISMsg &AISMsg, tN2kGNSStype &GNSStype) {
   return true;
 }
 
-//*****************************************************************************
+// *****************************************************************************
 // 8 bit Maxiumum present static draught
 // In 1/10 m, 255 = draught 25.5 m or greater, 0 = not available = default; in accordance with IMO Resolution A.851
 bool AddStaticDraught(tAISMsg &AISMsg, double &Draught) {
@@ -508,7 +508,7 @@ bool AddStaticDraught(tAISMsg &AISMsg, double &Draught) {
   return true;
 }
 
-//*****************************************************************************
+// *****************************************************************************
 // 20bit Estimated time of arrival; MMDDHHMM UTC
 // 4 Bits 19-16: month; 1-12; 0 = not available = default
 // 5 Bits 15-11: day; 1-31; 0 = not available = default

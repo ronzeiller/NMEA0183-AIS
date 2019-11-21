@@ -82,7 +82,7 @@ bool  SetAISClassBMessage24(tAISMsg &AISMsg, uint8_t MessageID, uint8_t Repeat,
                           uint32_t UserID, uint8_t VesselType, char *VendorID, char *Callsign,
                            double Length, double Beam, double PosRefStbd,  double PosRefBow, uint32_t MothershipID );
 
-//************************  Helper for AIS  ***********************************
+// ************************  Helper for AIS  ***********************************
 bool AddMessageType(tAISMsg &AISMsg, uint8_t MessageType);
 bool AddRepeat(tAISMsg &AISMsg, uint8_t Repeat);
 bool AddUserID(tAISMsg &AISMsg, uint32_t UserID);
