@@ -1,5 +1,5 @@
 /*
-AISMessages.h
+NMEA0183AISMessages.h
 
 Copyright (c) 2019 Ronnie Zeiller, www.zeiller.eu
 
@@ -24,21 +24,17 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-#ifndef _tAISMessages_H_
-#define _tAISMessages_H_
+#ifndef _tNMEA0183AISMessages_H_
+#define _tNMEA0183AISMessages_H_
 
 #include <stdio.h>
 #include <time.h>
 #include <string.h>
 #include <N2kTypes.h>
-#include <AISMsg.h>
+#include <NMEA0183AISMsg.h>
 #include <stddef.h>
 #include <vector>
 #include <string>
-
-#ifndef Arduino
-typedef uint8_t byte;
-#endif
 
 #define MAX_SHIP_IN_VECTOR 200
 class ship {
@@ -52,13 +48,13 @@ public:
 extern std::vector<ship *> vships;
 
 // Types 1, 2 and 3: Position Report Class A or B
-bool SetAISClassABMessage1(tAISMsg &AISMsg, uint8_t MessageType, uint8_t Repeat,
+bool SetAISClassABMessage1(tNMEA0183AISMsg &NMEA0183AISMsg, uint8_t MessageType, uint8_t Repeat,
                           uint32_t UserID, double Latitude, double Longitude, bool Accuracy, bool RAIM, uint8_t Seconds,
                           double COG, double SOG, double Heading, double ROT, uint8_t NavStatus);
 
 //*****************************************************************************
 // AIS Class A Static and Voyage Related Data Message Type 5
-bool SetAISClassAMessage5(tAISMsg &AISMsg, uint8_t MessageID, uint8_t Repeat,
+bool SetAISClassAMessage5(tNMEA0183AISMsg &NMEA0183AISMsg, uint8_t MessageID, uint8_t Repeat,
                           uint32_t UserID, uint32_t IMONumber, char *Callsign, char *Name,
                           uint8_t VesselType, double Length, double Beam, double PosRefStbd,
                           double PosRefBow, uint16_t ETAdate,  double ETAtime, double Draught,
@@ -66,7 +62,7 @@ bool SetAISClassAMessage5(tAISMsg &AISMsg, uint8_t MessageID, uint8_t Repeat,
 
 //*****************************************************************************
 // AIS position report (class B 129039) -> Standard Class B CS Position Report Message Type 18 Part B
-bool SetAISClassBMessage18(tAISMsg &AISMsg, uint8_t MessageID, uint8_t Repeat, uint32_t UserID,
+bool SetAISClassBMessage18(tNMEA0183AISMsg &NMEA0183AISMsg, uint8_t MessageID, uint8_t Repeat, uint32_t UserID,
                                   double Latitude, double Longitude, bool Accuracy, bool RAIM,
                                   uint8_t Seconds, double COG, double SOG, double Heading, tN2kAISUnit Unit,
                                   bool Display, bool DSC, bool Band, bool Msg22, bool Mode, bool State);
@@ -74,34 +70,13 @@ bool SetAISClassBMessage18(tAISMsg &AISMsg, uint8_t MessageID, uint8_t Repeat, u
 //*****************************************************************************
 // Static Data Report Class B, Message Type 24
 // PGN 129809 Handle AIS Class B "CS" Static Data Report, Part A
-bool SetAISClassBMessage24PartA(tAISMsg &AISMsg, uint8_t MessageID, uint8_t Repeat, uint32_t UserID, char *Name);
+bool SetAISClassBMessage24PartA(tNMEA0183AISMsg &NMEA0183AISMsg, uint8_t MessageID, uint8_t Repeat, uint32_t UserID, char *Name);
 
 //*****************************************************************************
 // Static Data Report Class B, Message Type 24
-bool  SetAISClassBMessage24(tAISMsg &AISMsg, uint8_t MessageID, uint8_t Repeat,
+bool  SetAISClassBMessage24(tNMEA0183AISMsg &NMEA0183AISMsg, uint8_t MessageID, uint8_t Repeat,
                           uint32_t UserID, uint8_t VesselType, char *VendorID, char *Callsign,
                            double Length, double Beam, double PosRefStbd,  double PosRefBow, uint32_t MothershipID );
-
-// ************************  Helper for AIS  ***********************************
-bool AddMessageType(tAISMsg &AISMsg, uint8_t MessageType);
-bool AddRepeat(tAISMsg &AISMsg, uint8_t Repeat);
-bool AddUserID(tAISMsg &AISMsg, uint32_t UserID);
-bool AddIMONumber(tAISMsg &AISMsg, uint32_t &IMONumber);
-//bool AddCallsign(tAISMsg &AISMsg, char *Callsign);
-bool AddText(tAISMsg &AISMsg, char *FieldVal, uint8_t length);
-bool AddVesselType(tAISMsg &AISMsg, uint8_t VesselType);
-bool AddDimensions(tAISMsg &AISMsg, double Length, double Beam, double PosRefStbd, double PosRefBow);
-bool AddNavStatus(tAISMsg &AISMsg, uint8_t &NavStatus);
-bool AddROT(tAISMsg &AISMsg, double &rot);
-bool AddSOG (tAISMsg &AISMsg, double &sog);
-bool AddLongitude(tAISMsg &AISMsg, double &Longitude);
-bool AddLatitude(tAISMsg &AISMsg, double &Latitude);
-bool AddHeading (tAISMsg &AISMsg, double &heading);
-bool AddCOG(tAISMsg &AISMsg, double cog);
-bool AddSeconds (tAISMsg &AISMsg, uint8_t &Seconds);
-bool AddEPFDFixType(tAISMsg &AISMsg, tN2kGNSStype &GNSStype);
-bool AddStaticDraught(tAISMsg &AISMsg, double &Draught);
-bool AddETADateTime(tAISMsg &AISMsg, uint16_t &ETAdate, double &ETAtime);
 
 inline int32_t aRoundToInt(double x) {
   return x >= 0

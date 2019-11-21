@@ -1,5 +1,5 @@
 /*
-AISMsg.h
+NMEA0183AISMsg.h
 
 Copyright (c) 2019 Ronnie Zeiller, www.zeiller.eu
 Based on the works of Timo Lappalainen NMEA2000 and NMEA0183 Library
@@ -23,8 +23,8 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-#ifndef _tAISMsg_H_
-#define _tAISMsg_H_
+#ifndef _tNMEA0183AISMsg_H_
+#define _tNMEA0183AISMsg_H_
 
 #include <NMEA0183Msg.h>
 #include <string.h>
@@ -45,7 +45,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #define BITSET_LENGTH 120
 
-class tAISMsg : public tNMEA0183Msg {
+class tNMEA0183AISMsg : public tNMEA0183Msg {
 
   protected:  // AIS-NMEA
     std::bitset<BITSET_LENGTH> bset;
@@ -63,7 +63,7 @@ class tAISMsg : public tNMEA0183Msg {
     void ClearAIS();
 
   public:
-    tAISMsg();
+    tNMEA0183AISMsg();
     const char *GetPayload();
     const char *GetPayloadType5_Part1();
     const char *GetPayloadType5_Part2();
