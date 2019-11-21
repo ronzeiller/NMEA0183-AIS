@@ -21,13 +21,29 @@ NMEA0183/NMEA2000 library. NMEA2000 -> NMEA0183 including AIS TYPE 1, CLASS A
    - Related CAN libraries.
 
  The example works with ESP32 MCU Kit from AZ-Delivery which should be a 1:1 clone from Espressif 32 Kit
+
+ Debugging Mode:
+  If you leave Config defines in main.cpp as they are and
+  #define SERIAL_PRINT_AIS_NMEA and #define SERIAL_PRINT_AIS_FIELDS in N2kDataToNMEA0183.cpp uncommented
+  you will get only !AIVDM sentences on Serial (USB) including their parsed values.
+
+ Normal operation would be:
+  #define ENABLE_NMEA0183_ON_USB 1
+  uncomment SERIAL_PRINT_AIS_NMEA and SERIAL_PRINT_AIS_FIELDS
 */
 
 #define ESP32_CAN_TX_PIN GPIO_NUM_5
 #define ESP32_CAN_RX_PIN GPIO_NUM_4
+#define GPIO_CAN_DISABLE GPIO_NUM_16  // -> CAN Transceiver MCP 2562 Pin 8 STBY
+
 #include <NMEA2000_CAN.h>  // This will automatically choose right CAN library and create suitable NMEA2000 object
 #include "N2kDataToNMEA0183.h"
 #include "BoardSerialNumber.h"
+
+// CONFIG
+#define ENABLE_N2K_ON_USB 0       // Schreibt N2k PGNs an Serial (USB)
+#define N2K_TEXTMODE      1       // If 1 -> Text-Mode, 0 -> Actisense Format
+#define ENABLE_NMEA0183_ON_USB 0  // Writes NMEA0183 to Serial (USB)
 
 #ifdef ARDUINO
 #define NMEA0183_Out_Stream_Speed 115200
@@ -61,9 +77,22 @@ tN2kDataToNMEA0183 N2kDataToNMEA0183(&NMEA2000, &NMEA0183_Out);
 
 // Set the information for other bus devices, which messages we support
 const unsigned long TransmitMessages[] PROGMEM={0};
-const unsigned long ReceiveMessages[] PROGMEM={/*126992L,*/127250L,127258L,128259UL,128267UL,129025UL,129026L,129029L,129038L,0};
+const unsigned long ReceiveMessages[] PROGMEM={/*126992L,*/
+                                                127250L,
+                                                127258L,
+                                                128259UL,
+                                                128267UL,
+                                                129025UL,
+                                                129026L,
+                                                129029L,
+                                                129038L,  // AIS Class A Position Report, Message Type 1
+                                                129039L,  // AIS Class B Position Report, Message Type 18
+                                                12979UL, // AIS Class A Ship Static and Voyage related data, Message Type 5
+                                                129809L, // AIS Class B "CS" Static Data Report, Part A
+                                                129810L, // AIS Class B "CS" Static Data Report, Part B
+                                                0};
 
-// *****************************************************************************
+//*****************************************************************************
 // Empty stream input buffer. Ports may get stuck, if they get data in and it will
 // not be read out.
 template <class T> void FlushStreamInput(T &stream) {
@@ -72,8 +101,12 @@ template <class T> void FlushStreamInput(T &stream) {
 #endif
 }
 
-// *****************************************************************************
+//*****************************************************************************
 void setup() {
+
+  // Enable CAN
+  pinMode(GPIO_CAN_DISABLE, INPUT_PULLDOWN);
+
   // Setup NMEA2000 system
   #ifndef ARDUINO
   setvbuf (stdout, NULL, _IONBF, 0); // No buffering on stdout, just send chars as they come.
@@ -88,8 +121,12 @@ void setup() {
   #else
   #endif
 
+  #if ENABLE_N2K_ON_USB == 1
   #ifdef N2kForward_Stream
-  NMEA2000.SetForwardStream(&N2kForward_Stream);
+  NMEA2000.SetForwardStream(&N2kForward_Stream);  // PC output on due native port
+  #endif
+  #else
+    NMEA2000.EnableForward(false);       // Disable all msg forwarding to USB (=Serial)
   #endif
 
   char SnoStr[33];
@@ -109,9 +146,12 @@ void setup() {
                                 2046 // Just choosen free from code list on http://www.nmea.org/Assets/20121020%20nmea%202000%20registration%20list.pdf
                                );
 
-  NMEA2000.SetForwardType(tNMEA2000::fwdt_Text); // Show in clear text. Leave uncommented for default Actisense format.
+  #if N2K_TEXTMODE == 1
+    NMEA2000.SetForwardType(tNMEA2000::fwdt_Text); // Show in clear text. Leave uncommented for default Actisense format.
+  #endif
+
+  // If you also want to see all traffic on the bus use N2km_ListenAndNode instead of N2km_NodeOnly below
   NMEA2000.SetMode(tNMEA2000::N2km_ListenAndNode,25);
-  //NMEA2000.EnableForward(false);
 
   NMEA2000.ExtendTransmitMessages(TransmitMessages);
   NMEA2000.ExtendReceiveMessages(ReceiveMessages);
@@ -119,16 +159,18 @@ void setup() {
 
   NMEA2000.Open();
 
-  // Setup NMEA0183 ports and handlers
-  NMEA0183_Out.SetMessageStream(&NMEA0183_Out_Stream);
-  NMEA0183_Out.Open();
+  #if ENABLE_NMEA0183_ON_USB == 1
+    // Setup NMEA0183 ports and handlers
+    NMEA0183_Out.SetMessageStream(&NMEA0183_Out_Stream);
+    NMEA0183_Out.Open();
+  #endif
 }
 
 #if defined(__linux__)||defined(__linux)||defined(linux)
 #include <unistd.h>
 #endif
 
-// *****************************************************************************
+//*****************************************************************************
 // This is preliminary definition. For RPi we need to build some
 // event system to minimize cpu usage.
 void WaitForEvent(unsigned long /*MaxTime*/) {
@@ -137,7 +179,7 @@ void WaitForEvent(unsigned long /*MaxTime*/) {
 #endif
 }
 
-// *****************************************************************************
+//*****************************************************************************
 void loop() {
   WaitForEvent(0);
   NMEA2000.ParseMessages();
@@ -151,7 +193,7 @@ void loop() {
 }
 
 #ifndef ARDUINO
-// *****************************************************************************
+//*****************************************************************************
 int main(void) {
   setup();
   while ( true ) loop();

@@ -225,7 +225,11 @@ void tN2kDataToNMEA0183::HandleAISClassAPosReport(const tN2kMsg &N2kMsg) {
       SendMessage(AISMsg);
 
       // Debug
-      #ifdef DEBUGMODE
+      #ifdef SERIAL_PRINT_AIS_FIELDS
+      const double pi=3.1415926535897932384626433832795;
+      const double radToDeg=180.0/pi;
+      const double msTokn=3600.0/1852.0;
+      const double radsToDegMin = 60 * 360.0 / (2 * pi);    // [rad/s -> degree/minute]
       Serial.println("–––––––––––––––––––––––– Msg 1 ––––––––––––––––––––––––––––––––");
       Serial.print("Repeat: "); Serial.println(_Repeat);
       Serial.print("UserID: "); Serial.println(_UserID);
@@ -258,7 +262,7 @@ void tN2kDataToNMEA0183::HandleAISClassAPosReport(const tN2kMsg &N2kMsg) {
 }  // end 129038 AIS Class A Position Report Message 1/3
 
 //*****************************************************************************
-// 129039 AIS Class B Position Report --> AIS Message Type 5: Static and Voyage Related Data
+// 129039 AIS Class B Position Report -> AIS Message Type 5: Static and Voyage Related Data
 void tN2kDataToNMEA0183::HandleAISClassAMessage5(const tN2kMsg &N2kMsg) {
   uint8_t _MessageID;
   tN2kAISRepeat _Repeat;
@@ -290,7 +294,7 @@ void tN2kDataToNMEA0183::HandleAISClassAMessage5(const tN2kMsg &N2kMsg) {
 
     #ifdef SERIAL_PRINT_AIS_FIELDS
     // Debug Print N2k Values
-    //Serial.println("––––––––––––––––––––––– Msg 5 –––––––––––––––––––––––––––––––––");
+    Serial.println("––––––––––––––––––––––– Msg 5 –––––––––––––––––––––––––––––––––");
     Serial.print("MessageID: "); Serial.println(_MessageID);
     Serial.print("Repeat: "); Serial.println(_Repeat);
     Serial.print("UserID: "); Serial.println(_UserID);
@@ -308,7 +312,7 @@ void tN2kDataToNMEA0183::HandleAISClassAMessage5(const tN2kMsg &N2kMsg) {
     Serial.print("Destination: "); Serial.println(_Destination);
     Serial.print("GNSStype: "); Serial.println(_GNSStype);
     Serial.print("DTE: "); Serial.println(_DTE);
-    //Serial.println("––––––––––––––––––––––– Msg 5 –––––––––––––––––––––––––––––––––");
+    Serial.println("––––––––––––––––––––––– Msg 5 –––––––––––––––––––––––––––––––––");
     #endif
 
     if ( SetAISClassAMessage5(AISMsg, _MessageID, _Repeat, _UserID, _IMONumber, _Callsign, _Name, _VesselType,
