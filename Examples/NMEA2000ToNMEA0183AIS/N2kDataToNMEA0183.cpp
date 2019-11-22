@@ -29,7 +29,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <NMEA0183AISMsg.h>
 
 #define SERIAL_PRINT_AIS_NMEA    // Prints the !AIVDM NMEA sentence on Serial
-#define SERIAL_PRINT_AIS_FIELDS  // Prints parsed datas derived from N2kParser
+//#define SERIAL_PRINT_AIS_FIELDS  // Prints parsed datas derived from N2kParser
 
 //*****************************************************************************
 void tN2kDataToNMEA0183::HandleMsg(const tN2kMsg &N2kMsg) {
@@ -313,12 +313,7 @@ void tN2kDataToNMEA0183::HandleAISClassAMessage5(const tN2kMsg &N2kMsg) {
                               _Length, _Beam, _PosRefStbd, _PosRefBow, _ETAdate, _ETAtime, _Draught, _Destination,
                               _GNSStype, _DTE ) ) {
 
-      // @TODO new approach with:
-      // const tNMEA0183AISMsg& BuildMessage5Part1();
-      SendMessage(NMEA0183AISMsg);  // First Part
-
-
-
+      SendMessage( NMEA0183AISMsg.BuildMsg5Part1() );
 
       #ifdef SERIAL_PRINT_AIS_NMEA
       // Debug Print AIS-NMEA Message Type 5, Part 1
@@ -334,17 +329,7 @@ void tN2kDataToNMEA0183::HandleAISClassAMessage5(const tN2kMsg &N2kMsg) {
       Serial.print(buf);
       #endif
 
-      // @TODO new approach with:
-      // const tNMEA0183AISMsg& BuildMessage5Part2();
-      if ( !NMEA0183AISMsg.Init("VDM","AI", _Prefix) ) return;
-      if ( !NMEA0183AISMsg.AddStrField("2") ) return;
-      if ( !NMEA0183AISMsg.AddStrField("2") ) return;
-      if ( !NMEA0183AISMsg.AddUInt32Field( _MessageID ) ) return;
-      if ( !NMEA0183AISMsg.AddStrField("A") ) return;
-      if ( !NMEA0183AISMsg.AddStrField( NMEA0183AISMsg.GetPayloadType5_Part2() ) ) return;
-      if ( !NMEA0183AISMsg.AddStrField("2") ) return;    // Message 5, Part 1 has always 2 Padding Zeros
-
-      SendMessage(NMEA0183AISMsg);
+      SendMessage( NMEA0183AISMsg.BuildMsg5Part2() );
 
       #ifdef SERIAL_PRINT_AIS_NMEA
       // Print AIS-NMEA Message Type 5, Part 2
@@ -358,7 +343,6 @@ void tN2kDataToNMEA0183::HandleAISClassAMessage5(const tN2kMsg &N2kMsg) {
       sprintf(buf,"*%02X\r\n",NMEA0183AISMsg.GetCheckSum());
       Serial.print(buf);
       #endif
-
     }
   }
 }
@@ -422,9 +406,7 @@ void tN2kDataToNMEA0183::HandleAISClassBMessage24A(const tN2kMsg &N2kMsg) {
   if ( ParseN2kPGN129809 (N2kMsg, _MessageID, _Repeat, _UserID, _Name) ) {
 
     tNMEA0183AISMsg NMEA0183AISMsg;
-    if ( SetAISClassBMessage24PartA(NMEA0183AISMsg, _MessageID, _Repeat, _UserID, _Name) ) {
-
-    }
+    if ( SetAISClassBMessage24PartA(NMEA0183AISMsg, _MessageID, _Repeat, _UserID, _Name) ) {}
   }
   return;
 }
@@ -457,7 +439,6 @@ void tN2kDataToNMEA0183::HandleAISClassBMessage24B(const tN2kMsg &N2kMsg) {
     Serial.print("VesselType: "); Serial.println(_VesselType);
     Serial.print("Vendor: "); Serial.println(_Vendor);
     Serial.print("Callsign: "); Serial.println(_Callsign);
-    //Serial.print("Name: "); Serial.println(_Name);
     Serial.print("Length: "); Serial.println(_Length);
     Serial.print("Beam: "); Serial.println(_Beam);
     Serial.print("PosRefStbd: "); Serial.println(_PosRefStbd);
@@ -472,10 +453,7 @@ void tN2kDataToNMEA0183::HandleAISClassBMessage24B(const tN2kMsg &N2kMsg) {
     if ( SetAISClassBMessage24(NMEA0183AISMsg, _MessageID, _Repeat, _UserID, _VesselType, _Vendor, _Callsign,
                           _Length, _Beam, _PosRefStbd, _PosRefBow, _MothershipID ) ) {
 
-      // @TODO new attempt for 2-parted AIS sentences
-      // SendMessage(NMEA0183AISMsg.BuildPart1());
-      // SendMessage(NMEA0183AISMsg.BuildPart2());
-      SendMessage(NMEA0183AISMsg);
+      SendMessage( NMEA0183AISMsg.BuildMsg24PartA() );
 
       #ifdef SERIAL_PRINT_AIS_NMEA
       // Debug Print AIS-NMEA
@@ -491,16 +469,7 @@ void tN2kDataToNMEA0183::HandleAISClassBMessage24B(const tN2kMsg &N2kMsg) {
       Serial.print(buf);
       #endif
 
-      // Build Part B
-      if ( !NMEA0183AISMsg.Init("VDM","AI", _Prefix) ) return;
-      if ( !NMEA0183AISMsg.AddStrField("1") ) return;
-      if ( !NMEA0183AISMsg.AddStrField("1") ) return;
-      if ( !NMEA0183AISMsg.AddEmptyField() ) return;
-      if ( !NMEA0183AISMsg.AddStrField("B") ) return;
-      if ( !NMEA0183AISMsg.AddStrField( NMEA0183AISMsg.GetPayloadType24_PartB() ) ) return;
-      if ( !NMEA0183AISMsg.AddStrField("0") ) return;    // Message 24, both parts have always Zero Padding
-
-      SendMessage(NMEA0183AISMsg);
+      SendMessage( NMEA0183AISMsg.BuildMsg24PartB() );
 
       #ifdef SERIAL_PRINT_AIS_NMEA
       Serial.print(NMEA0183AISMsg.GetPrefix());
@@ -513,7 +482,6 @@ void tN2kDataToNMEA0183::HandleAISClassBMessage24B(const tN2kMsg &N2kMsg) {
       sprintf(buf,"*%02X\r\n",NMEA0183AISMsg.GetCheckSum());
       Serial.print(buf);
       #endif
-
     }
   }
   return;

@@ -24,6 +24,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 #include "NMEA0183AISMsg.h"
+#include <NMEA0183Msg.h>
 #include <Arduino.h>
 #include <math.h>
 #include <stdint.h>
@@ -50,7 +51,7 @@ void tNMEA0183AISMsg::ClearAIS() {
 
 //*****************************************************************************
 // Add 6bit with no data.
-bool tNMEA0183AISMsg::AddAISEmptyField(uint8_t iBits) {
+bool tNMEA0183AISMsg::AddEmptyFieldToPayloadBin(uint8_t iBits) {
 
   if ( (iAddPldBin + iBits * 6) >= AIS_BIN_MAX_LEN ) return false; // Is there room for any data
 
@@ -86,7 +87,7 @@ bool tNMEA0183AISMsg::AddIntToPayloadBin(int32_t ival, uint16_t countBits) {
 }
 
 //  ****************************************************************************
-bool tNMEA0183AISMsg::AddBool(bool &bval, uint8_t size) {
+bool tNMEA0183AISMsg::AddBoolToPayloadBin(bool &bval, uint8_t size) {
   int8_t iTemp;
   (bval == true)? iTemp = 1 : iTemp = 0;
   if ( ! AddIntToPayloadBin(iTemp, size) ) return false;
@@ -96,7 +97,7 @@ bool tNMEA0183AISMsg::AddBool(bool &bval, uint8_t size) {
 // *****************************************************************************
 // converts sval into binary 6-bit AScii encoded string and appends it to PayloadBin
 // filled up with "@" == "000000" to given bit-size
-bool tNMEA0183AISMsg::AddEncodedCharToAscii(char *sval, size_t countBits) {
+bool tNMEA0183AISMsg::AddEncodedCharToPayloadBin(char *sval, size_t countBits) {
 
   if ( (iAddPldBin + countBits ) >= AIS_BIN_MAX_LEN ) return false; // Is there room for any data
 
@@ -132,7 +133,7 @@ bool tNMEA0183AISMsg::AddEncodedCharToAscii(char *sval, size_t countBits) {
 }
 
 // *****************************************************************************
-bool tNMEA0183AISMsg::convertBinaryAISPayloadBinToAscii(const char *payloadbin) {
+bool tNMEA0183AISMsg::ConvertBinaryAISPayloadBinToAscii(const char *payloadbin) {
   uint16_t len;
 
   len = strlen( payloadbin ) / 6;  // 28
@@ -160,7 +161,64 @@ bool tNMEA0183AISMsg::convertBinaryAISPayloadBinToAscii(const char *payloadbin) 
   return true;
 }
 
-//*******************************  AIS FIELDS  *********************************
+//**********************  BUILD 2-parted AIS Sentences  ************************
+const tNMEA0183AISMsg&  tNMEA0183AISMsg::BuildMsg5Part1() {
+  tNMEA0183AISMsg NMEA0183AISMsg;
+
+  Init("VDM", "AI", '!');
+  AddStrField("2");
+  AddStrField("1");
+  AddStrField("5");
+  AddStrField("A");
+  AddStrField( GetPayloadType5_Part1() );
+  AddStrField("0");
+
+  return NMEA0183AISMsg;
+}
+
+const tNMEA0183AISMsg&  tNMEA0183AISMsg::BuildMsg5Part2() {
+  tNMEA0183AISMsg NMEA0183AISMsg;
+
+  Init("VDM", "AI", '!');
+  AddStrField("2");
+  AddStrField("2");
+  AddStrField("5");
+  AddStrField("A");
+  AddStrField( GetPayloadType5_Part2() );
+  AddStrField("2"); // Message 5, Part 2 has always 2 Padding Zeros
+
+  return NMEA0183AISMsg;
+}
+
+const tNMEA0183AISMsg&  tNMEA0183AISMsg::BuildMsg24PartA() {
+  tNMEA0183AISMsg NMEA0183AISMsg;
+
+  Init("VDM", "AI", '!');
+  AddStrField("1");
+  AddStrField("1");
+  AddEmptyField();
+  AddStrField("A");
+  AddStrField( GetPayloadType24_PartA() );
+  AddStrField("0");
+
+  return NMEA0183AISMsg;
+}
+
+const tNMEA0183AISMsg& tNMEA0183AISMsg::BuildMsg24PartB() {
+  tNMEA0183AISMsg NMEA0183AISMsg;
+
+  Init("VDM", "AI", '!');
+  AddStrField("1");
+  AddStrField("1");
+  AddEmptyField();
+  AddStrField("A");
+  AddStrField( GetPayloadType24_PartB() );
+  AddStrField("0");    // Message 24, both parts have always Zero Padding
+
+  return NMEA0183AISMsg;
+}
+
+//*******************************  AIS PAYLOADS  *********************************
 //******************************************************************************
 // get converted Payload for Message 1, 2, 3 & 18, always Length 168
 const char *tNMEA0183AISMsg::GetPayload() {
@@ -168,7 +226,7 @@ const char *tNMEA0183AISMsg::GetPayload() {
   uint16_t lenbin = strlen( PayloadBin);
   if ( lenbin != 168 ) return nullptr;
 
-  if ( !convertBinaryAISPayloadBinToAscii( PayloadBin ) ) return nullptr;
+  if ( !ConvertBinaryAISPayloadBinToAscii( PayloadBin ) ) return nullptr;
   return Payload;
 }
 
@@ -183,7 +241,7 @@ const char *tNMEA0183AISMsg::GetPayloadType5_Part1() {
   strncpy(to, PayloadBin, 336);    // First Part is always 336 Length
   to[336]=0;
 
-  if ( !convertBinaryAISPayloadBinToAscii( to ) ) return nullptr;
+  if ( !ConvertBinaryAISPayloadBinToAscii( to ) ) return nullptr;
 
   return Payload;
 }
@@ -200,7 +258,7 @@ const char *tNMEA0183AISMsg::GetPayloadType5_Part2() {
   strncpy(to, PayloadBin + 336, lenbin);
   to[88]='0'; to[89]='0'; to[90]=0;
 
-  if ( !convertBinaryAISPayloadBinToAscii( to ) ) return nullptr;
+  if ( !ConvertBinaryAISPayloadBinToAscii( to ) ) return nullptr;
   return Payload;
 }
 
@@ -218,7 +276,7 @@ const char *tNMEA0183AISMsg::GetPayloadType24_PartA() {
     to[i] = PayloadBin[i];
   }
   to[168]=0;
-  if ( !convertBinaryAISPayloadBinToAscii( to ) ) return nullptr;
+  if ( !ConvertBinaryAISPayloadBinToAscii( to ) ) return nullptr;
   return Payload;
 
 }
@@ -240,6 +298,6 @@ const char *tNMEA0183AISMsg::GetPayloadType24_PartB() {
     to[i] = PayloadBin[i+128];
   }
   to[168]=0;
-  if ( !convertBinaryAISPayloadBinToAscii( to ) ) return nullptr;
+  if ( !ConvertBinaryAISPayloadBinToAscii( to ) ) return nullptr;
   return Payload;
 }

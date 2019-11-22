@@ -71,12 +71,17 @@ class tNMEA0183AISMsg : public tNMEA0183Msg {
     const char *GetPayloadType24_PartB();
     const char *GetPayloadBin() const { return  PayloadBin; }
 
+    const tNMEA0183AISMsg& BuildMsg5Part1();
+    const tNMEA0183AISMsg& BuildMsg5Part2();
+    const tNMEA0183AISMsg& BuildMsg24PartA();
+    const tNMEA0183AISMsg& BuildMsg24PartB();
+
     // Generally Used
     bool AddIntToPayloadBin(int32_t ival, uint16_t countBits);
-    bool AddBool(bool &bval, uint8_t size);
-    bool AddEncodedCharToAscii(char *sval, size_t Length);
-    bool convertBinaryAISPayloadBinToAscii(const char *payloadbin);
-    bool AddAISEmptyField(uint8_t iBits);
+    bool AddBoolToPayloadBin(bool &bval, uint8_t size);
+    bool AddEncodedCharToPayloadBin(char *sval, size_t Length);
+    bool AddEmptyFieldToPayloadBin(uint8_t iBits);
+    bool ConvertBinaryAISPayloadBinToAscii(const char *payloadbin);
 
   // AIS Helper functions
   protected:
