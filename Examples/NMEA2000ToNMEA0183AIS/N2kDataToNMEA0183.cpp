@@ -204,8 +204,6 @@ void tN2kDataToNMEA0183::HandleAISClassAPosReport(const tN2kMsg &N2kMsg) {
   tN2kAISNavStatus _NavStatus;
 
   uint8_t _MessageType = 1;
-  const char *AISClass="A";
-  char _Prefix='!';
   tNMEA0183AISMsg NMEA0183AISMsg;
 
   if ( ParseN2kPGN129038(N2kMsg, SID, _Repeat, _UserID, _Latitude, _Longitude, _Accuracy, _RAIM, _Seconds,
@@ -278,8 +276,6 @@ void tN2kDataToNMEA0183::HandleAISClassAMessage5(const tN2kMsg &N2kMsg) {
   tN2kAISTranceiverInfo _AISinfo;
   tN2kAISDTE _DTE;
 
-  const char *AISClass="A";
-  char _Prefix='!';
   tNMEA0183AISMsg NMEA0183AISMsg;
 
   if ( ParseN2kPGN129794(N2kMsg, _MessageID, _Repeat, _UserID, _IMONumber, _Callsign, _Name, _VesselType,
@@ -313,7 +309,7 @@ void tN2kDataToNMEA0183::HandleAISClassAMessage5(const tN2kMsg &N2kMsg) {
                               _Length, _Beam, _PosRefStbd, _PosRefBow, _ETAdate, _ETAtime, _Draught, _Destination,
                               _GNSStype, _DTE ) ) {
 
-      SendMessage( NMEA0183AISMsg.BuildMsg5Part1() );
+      SendMessage( NMEA0183AISMsg.BuildMsg5Part1(NMEA0183AISMsg) );
 
       #ifdef SERIAL_PRINT_AIS_NMEA
       // Debug Print AIS-NMEA Message Type 5, Part 1
@@ -329,7 +325,7 @@ void tN2kDataToNMEA0183::HandleAISClassAMessage5(const tN2kMsg &N2kMsg) {
       Serial.print(buf);
       #endif
 
-      SendMessage( NMEA0183AISMsg.BuildMsg5Part2() );
+      SendMessage( NMEA0183AISMsg.BuildMsg5Part2(NMEA0183AISMsg) );
 
       #ifdef SERIAL_PRINT_AIS_NMEA
       // Print AIS-NMEA Message Type 5, Part 2
@@ -447,13 +443,12 @@ void tN2kDataToNMEA0183::HandleAISClassBMessage24B(const tN2kMsg &N2kMsg) {
     Serial.println("––––––––––––––––––––––– Msg 24 ––––––––––––––––––––––––––––––––");
     #endif
 
-    char _Prefix='!';
     tNMEA0183AISMsg NMEA0183AISMsg;
 
     if ( SetAISClassBMessage24(NMEA0183AISMsg, _MessageID, _Repeat, _UserID, _VesselType, _Vendor, _Callsign,
                           _Length, _Beam, _PosRefStbd, _PosRefBow, _MothershipID ) ) {
 
-      SendMessage( NMEA0183AISMsg.BuildMsg24PartA() );
+      SendMessage( NMEA0183AISMsg.BuildMsg24PartA(NMEA0183AISMsg) );
 
       #ifdef SERIAL_PRINT_AIS_NMEA
       // Debug Print AIS-NMEA
@@ -469,7 +464,7 @@ void tN2kDataToNMEA0183::HandleAISClassBMessage24B(const tN2kMsg &N2kMsg) {
       Serial.print(buf);
       #endif
 
-      SendMessage( NMEA0183AISMsg.BuildMsg24PartB() );
+      SendMessage( NMEA0183AISMsg.BuildMsg24PartB(NMEA0183AISMsg) );
 
       #ifdef SERIAL_PRINT_AIS_NMEA
       Serial.print(NMEA0183AISMsg.GetPrefix());

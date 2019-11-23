@@ -162,8 +162,7 @@ bool tNMEA0183AISMsg::ConvertBinaryAISPayloadBinToAscii(const char *payloadbin) 
 }
 
 //**********************  BUILD 2-parted AIS Sentences  ************************
-const tNMEA0183AISMsg&  tNMEA0183AISMsg::BuildMsg5Part1() {
-  tNMEA0183AISMsg NMEA0183AISMsg;
+const tNMEA0183AISMsg&  tNMEA0183AISMsg::BuildMsg5Part1(tNMEA0183AISMsg &AISMsg) {
 
   Init("VDM", "AI", '!');
   AddStrField("2");
@@ -173,11 +172,10 @@ const tNMEA0183AISMsg&  tNMEA0183AISMsg::BuildMsg5Part1() {
   AddStrField( GetPayloadType5_Part1() );
   AddStrField("0");
 
-  return NMEA0183AISMsg;
+  return AISMsg;
 }
 
-const tNMEA0183AISMsg&  tNMEA0183AISMsg::BuildMsg5Part2() {
-  tNMEA0183AISMsg NMEA0183AISMsg;
+const tNMEA0183AISMsg&  tNMEA0183AISMsg::BuildMsg5Part2(tNMEA0183AISMsg &AISMsg) {
 
   Init("VDM", "AI", '!');
   AddStrField("2");
@@ -187,11 +185,10 @@ const tNMEA0183AISMsg&  tNMEA0183AISMsg::BuildMsg5Part2() {
   AddStrField( GetPayloadType5_Part2() );
   AddStrField("2"); // Message 5, Part 2 has always 2 Padding Zeros
 
-  return NMEA0183AISMsg;
+  return AISMsg;
 }
 
-const tNMEA0183AISMsg&  tNMEA0183AISMsg::BuildMsg24PartA() {
-  tNMEA0183AISMsg NMEA0183AISMsg;
+const tNMEA0183AISMsg&  tNMEA0183AISMsg::BuildMsg24PartA(tNMEA0183AISMsg &AISMsg) {
 
   Init("VDM", "AI", '!');
   AddStrField("1");
@@ -201,11 +198,10 @@ const tNMEA0183AISMsg&  tNMEA0183AISMsg::BuildMsg24PartA() {
   AddStrField( GetPayloadType24_PartA() );
   AddStrField("0");
 
-  return NMEA0183AISMsg;
+  return AISMsg;
 }
 
-const tNMEA0183AISMsg& tNMEA0183AISMsg::BuildMsg24PartB() {
-  tNMEA0183AISMsg NMEA0183AISMsg;
+const tNMEA0183AISMsg& tNMEA0183AISMsg::BuildMsg24PartB(tNMEA0183AISMsg &AISMsg) {
 
   Init("VDM", "AI", '!');
   AddStrField("1");
@@ -215,7 +211,7 @@ const tNMEA0183AISMsg& tNMEA0183AISMsg::BuildMsg24PartB() {
   AddStrField( GetPayloadType24_PartB() );
   AddStrField("0");    // Message 24, both parts have always Zero Padding
 
-  return NMEA0183AISMsg;
+  return AISMsg;
 }
 
 //*******************************  AIS PAYLOADS  *********************************
