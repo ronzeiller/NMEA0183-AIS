@@ -1,21 +1,21 @@
-= NMEA2000 -> SeaSmart/NMEA0183 WiFi converter =
+= NMEA2000 -> NMEA0183 + AIS WiFi converter =
 
- NMEA0183/NMEA2000 library. NMEA2000 -> NMEA0183
+ NMEA0183/NMEA2000 library. NMEA2000 -> NMEA0183 + AIS
 
    Reads messages from NMEA2000 and converts them to SeaSmart
    format and some also to NMEA0183 format and acts as server
    on WiFi network.
 
-   The example is designed for sending N2k data to WiFi in NMEA0183 + AIS
-   and SeaSmart format. You can use this with OpenCPN and various
-   mobile app, like iSailor, which can connect to TCP server and read NMEA0183 + AIS.
+   The example is designed for sending N2k data to WiFi in NMEA0183 + AIS Message Types 1, 5, 18, 24.
+   You can use this with OpenCPN and various mobile apps, like iSailor, which can connect to TCP server and read NMEA0183 + AIS.
 
-   Capable of Output Text or Actisense format on Serial (USB)
+   Capable of Output Text or Actisense format on Serial (USB).
+   So you could get NMEA2000 Actisense format via USB for Expedition and NMEA0183/AIS over WiFi for Apps, which can not read Actisense Format.
 
-   Example has been tested on ESP32.
+   Example has been tested on ESP32, Expedition and iSailor on iPad.
 
-   Currently you need to define you WiFi settings on the beginning
-   of main.cpp
+   Currently you need to define you WiFi settings on the beginning of main.cpp
+   Debug mode can be defined to get parsed AIS informations of Ships via USB.
 
  To use this example you need install also:
 
