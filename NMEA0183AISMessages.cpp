@@ -382,7 +382,7 @@ bool AddDimensions(tNMEA0183AISMsg &NMEA0183AISMsg, double Length, double Beam, 
 // Same values used as in tN2kAISNavStatus, so we can use direct numbers
 bool AddNavStatus(tNMEA0183AISMsg &NMEA0183AISMsg, uint8_t &NavStatus) {
   uint8_t iTemp;
-  (NavStatus > 0 && NavStatus < 15 )? iTemp = NavStatus : iTemp = 15;
+  (NavStatus >= 0 && NavStatus <= 15 )? iTemp = NavStatus : iTemp = 15;
    if ( ! NMEA0183AISMsg.AddIntToPayloadBin(iTemp, 4) ) return false;
   return true;
 }
