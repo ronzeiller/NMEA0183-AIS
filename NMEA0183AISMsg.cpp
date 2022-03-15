@@ -73,9 +73,9 @@ bool tNMEA0183AISMsg::AddIntToPayloadBin(int32_t ival, uint16_t countBits) {
   PayloadBin[iAddPldBin]=0;
   uint16_t iAdd=iAddPldBin;
 
-  char buf[1];
+  char buf[2];
   for(int i = countBits-1; i >= 0 ; i--) {
-    sprintf(buf, "%d", (int) bset[i]);
+    snprintf(buf, sizeof(buf), "%d", (int) bset[i]);
     PayloadBin[iAdd] = buf[0];
     iAdd++;
   }
