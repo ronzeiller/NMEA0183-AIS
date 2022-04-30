@@ -16,8 +16,14 @@ to get NMEA0183 AIS data from N2k-bus
 - NMEA2000 PGN 129810 => AIS Class B "CS" Static Data Report, Message 24 Part A+B
 
 ### Versions
+1.0.2 2022-04-30
+- bugfix: malloc without free. Thanks to Luis Soltero (Issue #2)
 
-1.0.0 initial upload
+1.0.1 2022-03-15
+- bugfix: buffer overrun missing space for termination. Thanks to Luis Soltero (Issue #1)
+
+1.0.0 2019-11-24
+- initial upload
 
 ### Remarks
 1. Message Type could be set to 1 or 3 (identical messages) on demand
