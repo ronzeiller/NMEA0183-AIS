@@ -1,10 +1,11 @@
-# NMEA2000 -> NMEA0183 AIS converter  v1.0.0
+# NMEA2000 to NMEA0183 AIS Converter
 
 
 NMEA0183  AIS library © Ronnie Zeiller, www.zeiller.eu
 
 Addendum for NMEA2000 and NMEA0183 Library from Timo Lappalainen https://github.com/ttlappalainen
 
+to get NMEA0183 AIS data from N2k-bus
 
 ## Conversions:
 
@@ -13,6 +14,10 @@ Addendum for NMEA2000 and NMEA0183 Library from Timo Lappalainen https://github.
 - NMEA2000 PGN 129794 => AIS Class A Ship Static and Voyage related data, Message Type 5 4.)
 - NMEA2000 PGN 129809 => AIS Class B "CS" Static Data Report, making a list of UserID (MMSI) and Ship Names used for Message 24 Part A
 - NMEA2000 PGN 129810 => AIS Class B "CS" Static Data Report, Message 24 Part A+B
+
+### Versions
+
+1.0.0 initial upload
 
 ### Remarks
 1. Message Type could be set to 1 or 3 (identical messages) on demand
