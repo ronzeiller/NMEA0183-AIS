@@ -408,9 +408,10 @@ void tN2kDataToNMEA0183::HandleAISClassBMessage18(const tN2kMsg &N2kMsg) {
   tN2kAISUnit _Unit;
   bool _Display, _DSC, _Band, _Msg22, _State;
   tN2kAISMode _Mode;
+  tN2kAISTransceiverInformation _AISTransceiverInformation;
 
   if ( ParseN2kPGN129039(N2kMsg, _MessageID, _Repeat, _UserID, _Latitude, _Longitude, _Accuracy, _RAIM,
-                     _Seconds, _COG, _SOG, _Heading, _Unit, _Display, _DSC, _Band, _Msg22, _Mode, _State) ) {
+                     _Seconds, _COG, _SOG, _AISTransceiverInformation, _Heading, _Unit, _Display, _DSC, _Band, _Msg22, _Mode, _State) ) {
 
     tNMEA0183AISMsg NMEA0183AISMsg;
 
