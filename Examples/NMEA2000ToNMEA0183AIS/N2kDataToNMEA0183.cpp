@@ -205,9 +205,11 @@ void tN2kDataToNMEA0183::HandleAISClassAPosReport(const tN2kMsg &N2kMsg) {
 
   uint8_t _MessageType = 1;
   tNMEA0183AISMsg NMEA0183AISMsg;
+  tN2kAISTransceiverInformation _AISTransceiverInformation;
 
-  if ( ParseN2kPGN129038(N2kMsg, SID, _Repeat, _UserID, _Latitude, _Longitude, _Accuracy, _RAIM, _Seconds,
-                          _COG, _SOG, _Heading, _ROT, _NavStatus ) ) {
+  if ( ParseN2kPGN129039(N2kMsg, _MessageID, _Repeat, _UserID, _Latitude, _Longitude, _Accuracy, _RAIM,
+                     _Seconds, _COG, _SOG, _AISTransceiverInformation, _Heading, _Unit, _Display, _DSC, _Band, _Msg22, _Mode, _State) ) {
+
 
     // Debug
     #ifdef SERIAL_PRINT_AIS_FIELDS
