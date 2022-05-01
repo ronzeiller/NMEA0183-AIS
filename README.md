@@ -17,10 +17,13 @@ to get NMEA0183 AIS data from N2k-bus
 
 ### Versions
 1.0.2 2022-04-30
-- bugfix: malloc without free. Thanks to Luis Soltero (Issue #2)
+- bugfix: malloc without free. Thanks to Luis Soltero (Issue https://github.com/ronzeiller/NMEA0183-AIS/issues/3)
 
 1.0.1 2022-03-15
-- bugfix: buffer overrun missing space for termination. Thanks to Luis Soltero (Issue #1)
+- bugfix: buffer overrun missing space for termination. Thanks to Luis Soltero (Issue https://github.com/ronzeiller/NMEA0183-AIS/issues/2)
+
+2020-12-25
+- corrected Navigational Status 0. Thanks to Li-Ren (Issue https://github.com/ronzeiller/NMEA0183-AIS/issues/1)
 
 1.0.0 2019-11-24
 - initial upload
