@@ -16,6 +16,10 @@ to get NMEA0183 AIS data from N2k-bus
 - NMEA2000 PGN 129810 => AIS Class B "CS" Static Data Report, Message 24 Part A+B
 
 ### Versions
+1.0.3 2022-05-01
+- Update Examples: AISTransceiverInformation in ParseN2kPGN129039 for changes in NMEA2000 library: https://github.com/ttlappalainen/NMEA2000
+
+
 1.0.2 2022-04-30
 - bugfix: malloc without free. Thanks to Luis Soltero (Issue https://github.com/ronzeiller/NMEA0183-AIS/issues/3)
 
