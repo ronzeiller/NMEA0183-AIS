@@ -146,10 +146,12 @@ bool  SetAISClassAMessage5(tNMEA0183AISMsg &NMEA0183AISMsg, uint8_t MessageID, u
 
 //  ****************************************************************************
 // AIS position report (class B 129039) -> Type 18: Standard Class B CS Position Report
-//  ParseN2kPGN129039(const tN2kMsg &N2kMsg, uint8_t &MessageID, tN2kAISRepeat &Repeat, uint32_t &UserID,
+// PGN129039
+// ParseN2kAISClassBPosition(const tN2kMsg &N2kMsg, uint8_t &MessageID, tN2kAISRepeat &Repeat, uint32_t &UserID,
 //                        double &Latitude, double &Longitude, bool &Accuracy, bool &RAIM,
-//                        uint8_t &Seconds, double &COG, double &SOG, double &Heading, tN2kAISUnit &Unit,
-//                        bool &Display, bool &DSC, bool &Band, bool &Msg22, tN2kAISMode &Mode, bool &State)
+//                        uint8_t &Seconds, double &COG, double &SOG, tN2kAISTransceiverInformation &AISTransceiverInformation,
+//                        double &Heading, tN2kAISUnit &Unit, bool &Display, bool &DSC, bool &Band, bool &Msg22, tN2kAISMode &Mode,
+//                        bool &State)
 //  VDM, VDO (AIS VHF Data-link message 18)
 bool SetAISClassBMessage18(tNMEA0183AISMsg &NMEA0183AISMsg, uint8_t MessageID, uint8_t Repeat, uint32_t UserID,
 			   double Latitude, double Longitude, bool Accuracy, bool RAIM,
@@ -209,7 +211,7 @@ bool SetAISClassBMessage18(tNMEA0183AISMsg &NMEA0183AISMsg, uint8_t MessageID, u
 //
 //  PGN 129809 AIS Class B "CS" Static Data Report, Part A -> AIS VHF Data-link message 24
 //  PGN 129810 AIS Class B "CS" Static Data Report, Part B -> AIS VHF Data-link message 24
-//   ParseN2kPGN129809 (const tN2kMsg &N2kMsg, uint8_t &MessageID, tN2kAISRepeat &Repeat, uint32_t &UserID, char *Name)  -> store to vector
+//  ParseN2kPGN129809 (const tN2kMsg &N2kMsg, uint8_t &MessageID, tN2kAISRepeat &Repeat, uint32_t &UserID, char *Name)  -> store to vector
 //  ParseN2kPGN129810(const tN2kMsg &N2kMsg, uint8_t &MessageID, tN2kAISRepeat &Repeat, uint32_t &UserID,
 //                      uint8_t &VesselType, char *Vendor, char *Callsign, double &Length, double &Beam,
 //                      double &PosRefStbd, double &PosRefBow, uint32_t &MothershipID);
