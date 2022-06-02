@@ -25,7 +25,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "NMEA0183AISMsg.h"
 #include <NMEA0183Msg.h>
-#include <Arduino.h>
+//#include <Arduino.h>
 #include <math.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -73,9 +73,9 @@ bool tNMEA0183AISMsg::AddIntToPayloadBin(int32_t ival, uint16_t countBits) {
   PayloadBin[iAddPldBin]=0;
   uint16_t iAdd=iAddPldBin;
 
-  char buf[1];
+  char buf[2];
   for(int i = countBits-1; i >= 0 ; i--) {
-    sprintf(buf, "%d", (int) bset[i]);
+    snprintf(buf, sizeof(buf), "%d", (int) bset[i]);
     PayloadBin[iAdd] = buf[0];
     iAdd++;
   }
@@ -103,11 +103,11 @@ bool tNMEA0183AISMsg::AddEncodedCharToPayloadBin(char *sval, size_t countBits) {
 
   PayloadBin[iAddPldBin]=0;
   std::bitset<6> bs;
-  char * ptr;
+  const char * ptr;
   size_t len = strlen(sval);  // e.g.: should be 7 for Callsign
   if ( len * 6 > countBits ) len = countBits / 6;
 
-  for (int i = 0; i<len; i++) {
+  for (size_t i = 0; i<len; i++) {
 
     ptr = strchr(AsciiChar, sval[i]);
     if ( ptr ) {
@@ -124,7 +124,7 @@ bool tNMEA0183AISMsg::AddEncodedCharToPayloadBin(char *sval, size_t countBits) {
 
   // fill up with "@", also covers empty sval
   if ( len * 6 < countBits ) {
-    for (int i=0;i<(countBits/6-len);i++) {
+    for (size_t i=0;i<(countBits/6-len);i++) {
       AddIntToPayloadBin(0, 6);
     }
   }
@@ -144,7 +144,7 @@ bool tNMEA0183AISMsg::ConvertBinaryAISPayloadBinToAscii(const char *payloadbin) 
   for ( i=0; i<len; i++ ) {
     offset = i * 6;
     int k = 0;
-    for (int j=offset; j<offset+6; j++ ) {
+    for (uint32_t j=offset; j<offset+6; j++ ) {
       s[k] = payloadbin[j];
        k++;
     }
@@ -162,9 +162,9 @@ bool tNMEA0183AISMsg::ConvertBinaryAISPayloadBinToAscii(const char *payloadbin) 
 }
 
 //**********************  BUILD 2-parted AIS Sentences  ************************
-const tNMEA0183AISMsg&  tNMEA0183AISMsg::BuildMsg5Part1(tNMEA0183AISMsg &AISMsg) {
+const tNMEA0183AISMsg&  tNMEA0183AISMsg::BuildMsg5Part1(tNMEA0183AISMsg &AISMsg, bool own) {
 
-  Init("VDM", "AI", '!');
+  Init(own?"VDO":"VDM", "AI", '!');
   AddStrField("2");
   AddStrField("1");
   AddStrField("5");
@@ -175,9 +175,9 @@ const tNMEA0183AISMsg&  tNMEA0183AISMsg::BuildMsg5Part1(tNMEA0183AISMsg &AISMsg)
   return AISMsg;
 }
 
-const tNMEA0183AISMsg&  tNMEA0183AISMsg::BuildMsg5Part2(tNMEA0183AISMsg &AISMsg) {
+const tNMEA0183AISMsg&  tNMEA0183AISMsg::BuildMsg5Part2(tNMEA0183AISMsg &AISMsg, bool own) {
 
-  Init("VDM", "AI", '!');
+  Init(own?"VDO":"VDM", "AI", '!');
   AddStrField("2");
   AddStrField("2");
   AddStrField("5");
@@ -188,9 +188,9 @@ const tNMEA0183AISMsg&  tNMEA0183AISMsg::BuildMsg5Part2(tNMEA0183AISMsg &AISMsg)
   return AISMsg;
 }
 
-const tNMEA0183AISMsg&  tNMEA0183AISMsg::BuildMsg24PartA(tNMEA0183AISMsg &AISMsg) {
+const tNMEA0183AISMsg&  tNMEA0183AISMsg::BuildMsg24PartA(tNMEA0183AISMsg &AISMsg, bool own) {
 
-  Init("VDM", "AI", '!');
+  Init(own?"VDO":"VDM", "AI", '!');
   AddStrField("1");
   AddStrField("1");
   AddEmptyField();
@@ -201,9 +201,9 @@ const tNMEA0183AISMsg&  tNMEA0183AISMsg::BuildMsg24PartA(tNMEA0183AISMsg &AISMsg
   return AISMsg;
 }
 
-const tNMEA0183AISMsg& tNMEA0183AISMsg::BuildMsg24PartB(tNMEA0183AISMsg &AISMsg) {
+const tNMEA0183AISMsg& tNMEA0183AISMsg::BuildMsg24PartB(tNMEA0183AISMsg &AISMsg, bool own) {
 
-  Init("VDM", "AI", '!');
+  Init(own?"VDO":"VDM", "AI", '!');
   AddStrField("1");
   AddStrField("1");
   AddEmptyField();
@@ -233,7 +233,8 @@ const char *tNMEA0183AISMsg::GetPayloadType5_Part1() {
   uint16_t lenbin = strlen( PayloadBin);
   if ( lenbin != 424 ) return nullptr;
 
-  char *to = (char*) malloc(337);
+  //  char *to = (char*) malloc(337);
+  char to[337];
   strncpy(to, PayloadBin, 336);    // First Part is always 336 Length
   to[336]=0;
 
@@ -250,7 +251,8 @@ const char *tNMEA0183AISMsg::GetPayloadType5_Part2() {
   if ( lenbin != 424 ) return nullptr;
 
   lenbin = 88;        // Second Part is always 424 - 336 + 2 padding Zeros in Length
-  char *to = (char*) malloc(91);
+  //  char *to = (char*) malloc(91);
+  char to[91];
   strncpy(to, PayloadBin + 336, lenbin);
   to[88]='0'; to[89]='0'; to[90]=0;
 
@@ -266,7 +268,8 @@ const char *tNMEA0183AISMsg::GetPayloadType24_PartA() {
   uint16_t lenbin = strlen( PayloadBin);
   if ( lenbin != 296 ) return nullptr;    // too short for Part A
 
-  char *to = (char*) malloc(169);    // Part A has Length 168
+  //  char *to = (char*) malloc(169);    // Part A has Length 168
+  char to[169];
   *to = '\0';
   for (int i=0; i<168; i++){
     to[i] = PayloadBin[i];
@@ -284,7 +287,8 @@ const char *tNMEA0183AISMsg::GetPayloadType24_PartA() {
 const char *tNMEA0183AISMsg::GetPayloadType24_PartB() {
   uint16_t lenbin = strlen( PayloadBin);
   if ( lenbin != 296 ) return nullptr;    // too short for Part B
-  char *to = (char*) malloc(169);    // Part B has Length 168
+  //  char *to = (char*) malloc(169);    // Part B has Length 168
+  char to[169];
   *to = '\0';
   for (int i=0; i<39; i++){
     to[i] = PayloadBin[i];

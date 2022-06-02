@@ -26,7 +26,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-#include <NMEA0183AISMessages.h>
+#include "NMEA0183AISMessages.h"
 #include <N2kTypes.h>
 #include <N2kMsg.h>
 #include <string.h>
@@ -34,7 +34,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //#include <unordered_map>
 #include <sstream>
 #include <math.h>
-#include <NMEA0183AISMsg.h>
+#include "NMEA0183AISMsg.h"
 
 const double pi=3.1415926535897932384626433832795;
 const double kmhToms=1000.0/3600.0;
@@ -57,7 +57,7 @@ static bool AddRepeat(tNMEA0183AISMsg &NMEA0183AISMsg, uint8_t Repeat);
 static bool AddUserID(tNMEA0183AISMsg &NMEA0183AISMsg, uint32_t UserID);
 static bool AddIMONumber(tNMEA0183AISMsg &NMEA0183AISMsg, uint32_t &IMONumber);
 static bool AddText(tNMEA0183AISMsg &NMEA0183AISMsg, char *FieldVal, uint8_t length);
-static bool AddVesselType(tNMEA0183AISMsg &NMEA0183AISMsg, uint8_t VesselType);
+//static bool AddVesselType(tNMEA0183AISMsg &NMEA0183AISMsg, uint8_t VesselType);
 static bool AddDimensions(tNMEA0183AISMsg &NMEA0183AISMsg, double Length, double Beam, double PosRefStbd, double PosRefBow);
 static bool AddNavStatus(tNMEA0183AISMsg &NMEA0183AISMsg, uint8_t &NavStatus);
 static bool AddROT(tNMEA0183AISMsg &NMEA0183AISMsg, double &rot);
@@ -81,8 +81,8 @@ static bool AddETADateTime(tNMEA0183AISMsg &NMEA0183AISMsg, uint16_t &ETAdate, d
 //
 // Got values from: ParseN2kPGN129038()
 bool SetAISClassABMessage1( tNMEA0183AISMsg &NMEA0183AISMsg, uint8_t MessageType, uint8_t Repeat,
-                          uint32_t UserID, double Latitude, double Longitude, bool Accuracy, bool RAIM, uint8_t Seconds,
-                          double COG, double SOG, double Heading, double ROT, uint8_t NavStatus ) {
+			    uint32_t UserID, double Latitude, double Longitude, bool Accuracy, bool RAIM, uint8_t Seconds,
+			    double COG, double SOG, double Heading, double ROT, uint8_t NavStatus, bool own ) {
 
   NMEA0183AISMsg.ClearAIS();
   if ( !AddMessageType(NMEA0183AISMsg, MessageType) ) return false;    // 0 - 5    | 6    Message Type -> Constant: 1
@@ -102,7 +102,7 @@ bool SetAISClassABMessage1( tNMEA0183AISMsg &NMEA0183AISMsg, uint8_t MessageType
   if ( !NMEA0183AISMsg.AddBoolToPayloadBin(RAIM, 1) ) return false;    // 148-148  | 1   RAIM flag 0 = RAIM not in use (default), 1 = RAIM in use
   if ( !NMEA0183AISMsg.AddIntToPayloadBin(0, 19) ) return false;       // 149-167  | 19  Radio Status  (-> 0 NOT SENT WITH THIS PGN!!!!!)
 
-  if ( !NMEA0183AISMsg.Init("VDM","AI", Prefix) ) return false;
+  if ( !NMEA0183AISMsg.Init(own?"VDO":"VDM","AI", Prefix) ) return false;
   if ( !NMEA0183AISMsg.AddStrField("1") ) return false;
   if ( !NMEA0183AISMsg.AddStrField("1") ) return false;
   if ( !NMEA0183AISMsg.AddEmptyField() ) return false;
@@ -152,9 +152,9 @@ bool  SetAISClassAMessage5(tNMEA0183AISMsg &NMEA0183AISMsg, uint8_t MessageID, u
 //                        bool &Display, bool &DSC, bool &Band, bool &Msg22, tN2kAISMode &Mode, bool &State)
 //  VDM, VDO (AIS VHF Data-link message 18)
 bool SetAISClassBMessage18(tNMEA0183AISMsg &NMEA0183AISMsg, uint8_t MessageID, uint8_t Repeat, uint32_t UserID,
-                                  double Latitude, double Longitude, bool Accuracy, bool RAIM,
-                                  uint8_t Seconds, double COG, double SOG, double Heading, tN2kAISUnit Unit,
-                                  bool Display, bool DSC, bool Band, bool Msg22, bool Mode, bool State) {
+			   double Latitude, double Longitude, bool Accuracy, bool RAIM,
+			   uint8_t Seconds, double COG, double SOG, double Heading, tN2kAISUnit Unit,
+			   bool Display, bool DSC, bool Band, bool Msg22, bool Mode, bool State, bool own) {
   //
   NMEA0183AISMsg.ClearAIS();
   if ( !AddMessageType(NMEA0183AISMsg, MessageID) ) return false;      // 0 - 5    | 6    Message Type -> Constant: 18
@@ -178,7 +178,7 @@ bool SetAISClassBMessage18(tNMEA0183AISMsg &NMEA0183AISMsg, uint8_t MessageID, u
   if ( !NMEA0183AISMsg.AddBoolToPayloadBin(RAIM, 1) ) return false;    // 147      | 1   as for Message Type 1,2,3
   if ( !NMEA0183AISMsg.AddIntToPayloadBin(0, 20) ) return false;       // 148-167  | 20  Radio Status not in PGN 129039
 
-  if ( !NMEA0183AISMsg.Init("VDM","AI", Prefix) ) return false;
+  if ( !NMEA0183AISMsg.Init(own?"VDO":"VDM","AI", Prefix) ) return false;
   if ( !NMEA0183AISMsg.AddStrField("1") ) return false;
   if ( !NMEA0183AISMsg.AddStrField("1") ) return false;
   if ( !NMEA0183AISMsg.AddEmptyField() ) return false;
@@ -219,7 +219,7 @@ bool SetAISClassBMessage18(tNMEA0183AISMsg &NMEA0183AISMsg, uint8_t MessageID, u
 bool SetAISClassBMessage24PartA(tNMEA0183AISMsg &NMEA0183AISMsg, uint8_t MessageID, uint8_t Repeat, uint32_t UserID, char *Name) {
 
   bool found = false;
-  for (int i = 0; i < vships.size(); i++) {
+  for (long unsigned int i = 0; i < vships.size(); i++) {
     if ( vships[i]->_userID == UserID ) {
       found = true;
       break;
@@ -244,9 +244,9 @@ bool  SetAISClassBMessage24(tNMEA0183AISMsg &NMEA0183AISMsg, uint8_t MessageID, 
   uint8_t i;
   for ( i = 0; i < vships.size(); i++) {
     if ( vships[i]->_userID == UserID ) {
-      Serial.print("UserID gefunden: "); Serial.print(UserID);
+//      Serial.print("UserID gefunden: "); Serial.print(UserID);
       ShipName = const_cast<char*>( vships[i]->_shipName.c_str() );
-      Serial.print(" / "); Serial.println( ShipName);
+//      Serial.print(" / "); Serial.println( ShipName);
     }
   }
   if ( i > MAX_SHIP_IN_VECTOR ) {

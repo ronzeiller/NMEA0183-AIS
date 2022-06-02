@@ -71,10 +71,10 @@ class tNMEA0183AISMsg : public tNMEA0183Msg {
     const char *GetPayloadType24_PartB();
     const char *GetPayloadBin() const { return  PayloadBin; }
 
-    const tNMEA0183AISMsg& BuildMsg5Part1(tNMEA0183AISMsg &AISMsg);
-    const tNMEA0183AISMsg& BuildMsg5Part2(tNMEA0183AISMsg &AISMsg);
-    const tNMEA0183AISMsg& BuildMsg24PartA(tNMEA0183AISMsg &AISMsg);
-    const tNMEA0183AISMsg& BuildMsg24PartB(tNMEA0183AISMsg &AISMsg);
+    const tNMEA0183AISMsg& BuildMsg5Part1(tNMEA0183AISMsg &AISMsg, bool own);
+    const tNMEA0183AISMsg& BuildMsg5Part2(tNMEA0183AISMsg &AISMsg, bool own);
+    const tNMEA0183AISMsg& BuildMsg24PartA(tNMEA0183AISMsg &AISMsg, bool own);
+    const tNMEA0183AISMsg& BuildMsg24PartB(tNMEA0183AISMsg &AISMsg, bool own);
 
     // Generally Used
     bool AddIntToPayloadBin(int32_t ival, uint16_t countBits);
