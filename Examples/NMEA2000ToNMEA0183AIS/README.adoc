@@ -1,0 +1,26 @@
+= NMEA2000 -> NMEA0183 converter with AIS =
+
+NMEA2000ToNMEA0183AIS
+
+NMEA0183/NMEA2000 library. NMEA2000 -> NMEA0183 including AIS TYPE 1, CLASS A
+
+ NMEA2000ToNMEA0183 Example taken from Timo Lappalainen
+ Extended for AIS Encoding by Ronnie Zeiller
+
+
+   Reads some messages from NMEA2000 and converts them to NMEA0183
+   format to NMEA0183_out (Serial on Arduino or /dev/tnt0 on RPi).
+   Also forwards all NMEA2000 bus messages in Actisense format.
+
+ To use this example you need install also:
+
+   - NMEA2000 library
+
+   - NMEA0183 library
+
+   - Related CAN libraries.
+
+ This example works with ESP32 MCU Kit from AZ-Delivery which should be a 1:1 clone from Espressif 32 Kit
+
+25.3.2024
+  Fixed to work with Timo´s NMEA2000 v4.21.3 and NMEA0183 v1.9.2
