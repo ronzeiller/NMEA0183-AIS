@@ -16,6 +16,9 @@ to get NMEA0183 AIS data from N2k-bus
 - NMEA2000 PGN 129810 => AIS Class B "CS" Static Data Report, Message 24 Part A+B
 
 ### Versions
+1.0.6 2024-03-25
+- fixed to work with Timo´s NMEA2000 v4.21.3
+
 1.0.5 2023-12-02
 - removed VDO remote print statements
 
